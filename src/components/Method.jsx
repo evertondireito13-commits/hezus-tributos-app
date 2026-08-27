@@ -33,9 +33,12 @@ export default function Method() {
         {principles.map((p) => (
           <div
             key={p.title}
-            className="rounded-2xl border border-line bg-white/[0.03] p-6 transition hover:border-emerald/30"
+            className="rounded-2xl border border-line bg-white/[0.03] p-6 transition hover:border-blue/30"
           >
-            <h3 className="font-display text-lg text-emerald">{p.title}</h3>
+            <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue to-blue-light font-display text-sm font-bold text-white">
+              H
+            </div>
+            <h3 className="font-display text-lg text-blue-light">{p.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-ice/65">{p.text}</p>
           </div>
         ))}
@@ -43,3 +46,4 @@ export default function Method() {
     </section>
   )
 }
+
