@@ -22,18 +22,18 @@ export default function LeadForm() {
         </p>
 
         {sent ? (
-          <div className="mt-8 rounded-xl border border-emerald/30 bg-emerald/10 p-6 text-emerald">
+          <div className="mt-8 rounded-xl border border-blue/30 bg-blue/10 p-6 text-blue">
             Recebido! Nossa equipe entra em contato em breve.
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-8 grid gap-4 text-left sm:grid-cols-2">
-            <input required placeholder="Nome" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-emerald" />
-            <input required placeholder="Empresa" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-emerald" />
-            <input required placeholder="Faturamento aproximado" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-emerald" />
-            <input required placeholder="WhatsApp" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-emerald" />
+            <input required placeholder="Nome" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-blue" />
+            <input required placeholder="Empresa" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-blue" />
+            <input required placeholder="Faturamento aproximado" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-blue" />
+            <input required placeholder="WhatsApp" className="rounded-lg border border-line bg-graphite px-4 py-3 text-sm outline-none focus:border-blue" />
             <button
               type="submit"
-              className="sm:col-span-2 mt-2 rounded-full bg-emerald px-7 py-3 font-semibold text-graphite transition hover:brightness-110"
+              className="sm:col-span-2 mt-2 rounded-full bg-blue px-7 py-3 font-semibold text-white transition hover:brightness-110"
             >
               Solicitar diagnóstico gratuito
             </button>
@@ -43,3 +43,4 @@ export default function LeadForm() {
     </section>
   )
 }
+
