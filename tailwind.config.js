@@ -4,16 +4,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        graphite: '#12161C',
-        ice: '#F7F8FA',
-        emerald: '#0F9D6B',
+        graphite: '#080B14',
+        graphite2: '#111729',
+        ice: '#F5F7FB',
+        blue: '#3E63F5',
+        'blue-light': '#7C97FF',
+        'blue-glow': '#3D6BFF',
         gold: '#C9A24B',
-        line: 'rgba(247,248,250,0.10)',
+        line: 'rgba(140,165,255,0.14)',
       },
       fontFamily: {
-        display: ['"Fraunces"', 'serif'],
+        display: ['"Manrope"', 'sans-serif'],
         body: ['"Manrope"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
+      },
+      backgroundImage: {
+        'grid-dots':
+          'radial-gradient(rgba(140,165,255,0.14) 1px, transparent 1px)',
+      },
+      backgroundSize: {
+        'grid-dots': '22px 22px',
       },
     },
   },
