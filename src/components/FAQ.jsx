@@ -41,7 +41,7 @@ export default function FAQ() {
                   className="flex w-full items-center justify-between py-5 text-left"
                 >
                   <span className="font-display text-base">{f.q}</span>
-                  <span className="ml-4 text-emerald">{isOpen ? '−' : '+'}</span>
+                  <span className="ml-4 text-blue">{isOpen ? '−' : '+'}</span>
                 </button>
                 {isOpen && (
                   <p className="pb-5 text-sm leading-relaxed text-ice/65">{f.a}</p>
@@ -54,3 +54,4 @@ export default function FAQ() {
     </section>
   )
 }
+
