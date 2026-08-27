@@ -18,7 +18,7 @@ export default function HowItWorks() {
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => (
           <div key={s.n} className="relative pl-1">
-            <p className="font-mono text-3xl text-emerald/70">{s.n}</p>
+            <p className="font-mono text-3xl text-blue-light/70">{s.n}</p>
             <h3 className="mt-3 font-display text-lg">{s.title}</h3>
             <p className="mt-2 text-sm text-ice/60">{s.text}</p>
             {i < steps.length - 1 && (
@@ -30,3 +30,4 @@ export default function HowItWorks() {
     </section>
   )
 }
+
