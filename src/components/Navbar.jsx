@@ -9,8 +9,8 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-line bg-graphite/85 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#top" className="font-display text-lg tracking-tight">
-          HEZUS <span className="text-emerald">Capital</span> & Tributos
+        <a href="#top" className="flex items-center gap-2">
+          <img src="/hezus-logo.svg" alt="Hezus Capital & Tributos" className="logo-mark h-6 w-auto" />
         </a>
         <div className="hidden gap-8 md:flex">
           {links.map((l) => (
@@ -25,7 +25,7 @@ export default function Navbar() {
         </div>
         <a
           href="#lead"
-          className="rounded-full bg-emerald px-5 py-2 text-sm font-semibold text-graphite transition hover:brightness-110"
+          className="rounded-full bg-blue px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110"
         >
           Diagnóstico gratuito
         </a>
@@ -33,3 +33,4 @@ export default function Navbar() {
     </header>
   )
 }
+
