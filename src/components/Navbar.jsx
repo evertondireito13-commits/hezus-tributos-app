@@ -1,3 +1,5 @@
+import Logo from './Logo'
+
 export default function Navbar() {
   const links = [
     { href: '#metodo', label: 'Método' },
@@ -10,11 +12,7 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-line bg-graphite/85 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a href="#top" className="flex items-center">
-          <img
-            src="/hezus-logo.png"
-            alt="HEZUS"
-            className="h-8 md:h-10 w-auto"
-          />
+          <Logo />
         </a>
         <div className="hidden gap-8 md:flex">
           {links.map((l) => (
