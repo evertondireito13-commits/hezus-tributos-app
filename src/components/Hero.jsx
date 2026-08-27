@@ -21,23 +21,26 @@ export default function Hero() {
 
   return (
     <section id="top" className="relative overflow-hidden pt-32 pb-24">
-      <div className="pointer-events-none absolute -top-40 right-0 h-[32rem] w-[32rem] rounded-full bg-emerald/10 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 bg-grid-dots opacity-30 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)]" />
+      <div className="brand-glow pointer-events-none absolute -top-40 right-[-10%] h-[34rem] w-[34rem] rounded-full blur-3xl" />
       <div className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="reveal-init">
-          <p className="section-label mb-5">Consultoria tributária e contábil</p>
-          <h1 className="font-display text-4xl leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-            Todo <span className="text-emerald">real pago a mais</span> em tributo é um
-            número que precisa se sustentar.
+          <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-4 py-1.5 text-xs text-ice/60">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue" />
+            Inteligência tributária, financeira e estratégica
+          </span>
+          <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.3rem]">
+            Você paga tributos a mais e sente que esse dinheiro nunca volta?
           </h1>
           <p className="mt-6 max-w-lg text-lg text-ice/70">
-            Diagnóstico técnico, classificação de risco e cálculo de créditos —
-            com tecnologia própria e acompanhamento em tempo real. Time
-            multidisciplinar em Direito e Contabilidade.
+            Descubra se sua empresa está entre as que pagam mais do que
+            deveria — com diagnóstico técnico gratuito, tecnologia própria e
+            time multidisciplinar em Direito e Contabilidade.
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
             <a
               href="#lead"
-              className="rounded-full bg-emerald px-7 py-3 font-semibold text-graphite transition hover:brightness-110"
+              className="rounded-full bg-blue px-7 py-3 font-semibold text-white transition hover:brightness-110"
             >
               Solicitar diagnóstico gratuito
             </a>
@@ -62,7 +65,7 @@ export default function Hero() {
                 onClick={() => setRegime(key)}
                 className={`rounded-lg border px-2 py-2 text-xs font-medium transition ${
                   regime === key
-                    ? 'border-emerald bg-emerald/15 text-emerald'
+                    ? 'border-blue bg-blue/15 text-blue'
                     : 'border-line text-ice/60 hover:border-ice/30'
                 }`}
               >
@@ -81,13 +84,13 @@ export default function Hero() {
             step="10000"
             value={faturamento}
             onChange={(e) => setFaturamento(Number(e.target.value))}
-            className="mt-3 w-full accent-emerald"
+            className="mt-3 w-full accent-blue"
           />
           <p className="mt-1 font-mono text-sm text-ice/70">{formatBRL(faturamento)}/mês</p>
 
-          <div className="mt-6 rounded-xl border border-emerald/30 bg-emerald/10 p-5">
+          <div className="mt-6 rounded-xl border border-blue/30 bg-blue/10 p-5">
             <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada</p>
-            <p className="mt-1 font-mono text-2xl font-semibold text-emerald">
+            <p className="mt-1 font-mono text-2xl font-semibold text-blue-light">
               {formatBRL(low)} – {formatBRL(high)}
             </p>
             <p className="mt-2 text-xs text-ice/50">
@@ -100,3 +103,4 @@ export default function Hero() {
     </section>
   )
 }
+
