@@ -61,9 +61,9 @@ export default function Services() {
               <button
                 key={s.title}
                 onClick={() => setOpen(isOpen ? null : i)}
-                className="rounded-xl border border-line bg-graphite p-5 text-left transition hover:border-emerald/30"
+                className="rounded-xl border border-line bg-graphite p-5 text-left transition hover:border-blue/30"
               >
-                <span className="font-mono text-xs text-emerald">
+                <span className="font-mono text-xs text-blue">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <h3 className="mt-2 font-display text-base">{s.title}</h3>
@@ -85,3 +85,4 @@ export default function Services() {
     </section>
   )
 }
+
