@@ -10,7 +10,7 @@ export default function TrustBar() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 text-sm text-ice/60">
         {items.map((item) => (
           <span key={item} className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
+            <span className="h-1.5 w-1.5 rounded-full bg-blue" />
             {item}
           </span>
         ))}
@@ -18,3 +18,11 @@ export default function TrustBar() {
     </section>
   )
 }
+
+/*
+  Se quiser reativar a barra de logos de clientes (como no site antigo em
+  framer: SE, YOUFE, PFX, DOW, Oasis), troque o array `items` acima por uma
+  lista de { name, logoUrl } e renderize <img> em escala de cinza. Só inclua
+  aqui os clientes que já autorizaram o uso da marca no site.
+*/
+
