@@ -23,7 +23,7 @@ export default function ClientPanel() {
         <div className="rounded-2xl border border-line bg-graphite p-4 shadow-xl shadow-black/30 sm:p-6">
           <div className="mb-4 flex items-center justify-between border-b border-line pb-4">
             <span className="font-display text-sm text-ice/70">Painel — Empresa Exemplo Ltda.</span>
-            <span className="rounded-full bg-emerald/15 px-3 py-1 font-mono text-xs text-emerald">
+            <span className="rounded-full bg-blue/15 px-3 py-1 font-mono text-xs text-blue">
               Ativo
             </span>
           </div>
@@ -31,7 +31,7 @@ export default function ClientPanel() {
             {cards.map((c) => (
               <div key={c.label} className="rounded-xl border border-line p-4">
                 <p className="text-xs uppercase tracking-wide text-ice/45">{c.label}</p>
-                <p className="mt-2 font-mono text-xl font-semibold text-emerald">{c.value}</p>
+                <p className="mt-2 font-mono text-xl font-semibold text-blue">{c.value}</p>
                 <p className="mt-1 text-xs text-ice/45">{c.sub}</p>
               </div>
             ))}
@@ -41,3 +41,4 @@ export default function ClientPanel() {
     </section>
   )
 }
+
