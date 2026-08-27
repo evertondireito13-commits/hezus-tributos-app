@@ -9,8 +9,15 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-line bg-graphite/85 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#top" className="font-display text-lg tracking-tight">
-          HEZUS <span className="text-emerald">Capital</span> & Tributos
+        <a
+          href="#top"
+          className="text-2xl font-semibold tracking-wider bg-clip-text text-transparent"
+          style={{
+            backgroundImage:
+              'linear-gradient(135deg, #E8E9EC 0%, #A8ABB3 45%, #F7F8FA 55%, #6B6E76 100%)',
+          }}
+        >
+          HEZUS
         </a>
         <div className="hidden gap-8 md:flex">
           {links.map((l) => (
