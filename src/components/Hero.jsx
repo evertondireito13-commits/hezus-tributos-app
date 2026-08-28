@@ -23,12 +23,7 @@ export default function Hero() {
     <section id="top" className="relative overflow-hidden pt-32 pb-24">
       <div className="pointer-events-none absolute inset-0 bg-grid-dots opacity-30 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)]" />
       <div className="brand-glow pointer-events-none absolute -top-40 right-[-10%] h-[34rem] w-[34rem] rounded-full blur-3xl" />
-      <img
-        src="/hezus-mark.png"
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-16 top-24 hidden h-[28rem] w-auto opacity-[0.06] lg:block"
-      />
+      <img src="/hezus-mark.png" alt="" aria-hidden="true" className="pointer-events-none absolute -right-16 top-24 hidden h-[28rem] w-auto opacity-[0.06] lg:block" />
       <div className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="reveal-init">
           <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-4 py-1.5 text-xs text-ice/60">
@@ -44,20 +39,8 @@ export default function Hero() {
             time multidisciplinar em Direito e Contabilidade.
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
-            
-              href="#lead"
-              className="rounded-full bg-blue px-7 py-3 font-semibold text-white transition hover:brightness-110"
-            >
-              Quero fazer meu diagnóstico
-            </a>
-            
-              href="https://wa.me/5500000000000?text=Ol%C3%A1!%20Quero%20entrar%20em%20contato%20com%20a%20Hezus%20Capital%20e%20Tributos."
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-line px-7 py-3 font-semibold text-ice/80 transition hover:border-ice/40 hover:text-ice"
-            >
-              Entrar em contato agora
-            </a>
+            <a href="#lead" className="rounded-full bg-blue px-7 py-3 font-semibold text-white transition hover:brightness-110">Quero fazer meu diagnóstico</a>
+            <a href="https://wa.me/5500000000000?text=Ol%C3%A1!%20Quero%20entrar%20em%20contato%20com%20a%20Hezus%20Capital%20e%20Tributos." target="_blank" rel="noreferrer" className="rounded-full border border-line px-7 py-3 font-semibold text-ice/80 transition hover:border-ice/40 hover:text-ice">Entrar em contato agora</a>
           </div>
         </div>
 
