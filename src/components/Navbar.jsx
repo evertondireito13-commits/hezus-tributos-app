@@ -8,6 +8,7 @@ const LINKS = [
   { href: '#tecnologia', label: 'Tecnologia' },
   { href: '#painel', label: 'Painel do cliente' },
   { href: '#faq', label: 'FAQ' },
+  { href: '#contato', label: 'Contato' },
 ]
 
 export default function Navbar() {
