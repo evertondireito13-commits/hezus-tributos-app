@@ -4,6 +4,7 @@ import TrustBar from './components/TrustBar.jsx'
 import QuemSomos from './components/QuemSomos.jsx'
 import Method from './components/Method.jsx'
 import MethodDeep from './components/MethodDeep.jsx'
+import Atuacao from './components/Atuacao.jsx'
 import Services from './components/Services.jsx'
 import HowItWorks from './components/HowItWorks.jsx'
 import ClientPanel from './components/ClientPanel.jsx'
@@ -23,6 +24,7 @@ export default function App() {
         <Method />
         <MethodDeep />
         <Services />
+        <Atuacao />
         <HowItWorks />
         <ClientPanel />
         <Testimonials />
