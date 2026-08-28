@@ -8,6 +8,7 @@ import Atuacao from './components/Atuacao.jsx'
 import Services from './components/Services.jsx'
 import HowItWorks from './components/HowItWorks.jsx'
 import ClientPanel from './components/ClientPanel.jsx'
+import Tecnologia from './components/Tecnologia.jsx'
 import Testimonials from './components/Testimonials.jsx'
 import FAQ from './components/FAQ.jsx'
 import LeadForm from './components/LeadForm.jsx'
@@ -28,6 +29,7 @@ export default function App() {
         <Atuacao />
         <HowItWorks />
         <ClientPanel />
+        <Tecnologia />
         <Testimonials />
         <FAQ />
         <LeadForm />
