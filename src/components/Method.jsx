@@ -22,7 +22,7 @@ const principles = [
 export default function Method() {
   const ref = useReveal()
   return (
-    <section id="metodo" className="mx-auto max-w-6xl px-6 py-24">
+    <section id="metodo" className="mx-auto max-w-6xl px-5 sm:px-6 py-16 sm:py-24">
       <div ref={ref} className="reveal reveal-init mb-12 max-w-xl">
         <p className="section-label mb-3">Método HEZUS</p>
         <h2 className="font-display text-3xl">

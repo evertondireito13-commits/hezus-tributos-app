@@ -12,8 +12,8 @@ export default function LeadForm() {
   }
 
   return (
-    <section id="lead" className="border-t border-line bg-white/[0.02] py-24">
-      <div ref={ref} className="reveal reveal-init mx-auto max-w-2xl px-6 text-center">
+    <section id="lead" className="border-t border-line bg-white/[0.02] py-16 sm:py-24">
+      <div ref={ref} className="reveal reveal-init mx-auto max-w-2xl px-5 sm:px-6 text-center">
         <p className="section-label mb-3">Próximo passo</p>
         <h2 className="font-display text-3xl">Peça seu diagnóstico gratuito</h2>
         <p className="mt-3 text-sm text-ice/60">

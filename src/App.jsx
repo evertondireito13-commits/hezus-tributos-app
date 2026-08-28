@@ -1,6 +1,7 @@
 import Navbar from './components/Navbar.jsx'
 import Hero from './components/Hero.jsx'
 import TrustBar from './components/TrustBar.jsx'
+import QuemSomos from './components/QuemSomos.jsx'
 import Method from './components/Method.jsx'
 import Services from './components/Services.jsx'
 import HowItWorks from './components/HowItWorks.jsx'
@@ -17,6 +18,7 @@ export default function App() {
       <main>
         <Hero />
         <TrustBar />
+        <QuemSomos />
         <Method />
         <Services />
         <HowItWorks />

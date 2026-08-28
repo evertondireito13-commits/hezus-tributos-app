@@ -25,8 +25,8 @@ export default function FAQ() {
   const [open, setOpen] = useState(0)
 
   return (
-    <section id="faq" className="border-t border-line py-24">
-      <div className="mx-auto max-w-3xl px-6">
+    <section id="faq" className="border-t border-line py-16 sm:py-24">
+      <div className="mx-auto max-w-3xl px-5 sm:px-6">
         <div ref={ref} className="reveal reveal-init mb-10">
           <p className="section-label mb-3">FAQ</p>
           <h2 className="font-display text-3xl">Perguntas frequentes</h2>

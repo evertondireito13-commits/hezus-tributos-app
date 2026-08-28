@@ -20,40 +20,40 @@ export default function Hero() {
   }, [regime, faturamento])
 
   return (
-    <section id="top" className="relative overflow-hidden pt-32 pb-24">
+    <section id="top" className="relative overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24">
       <div className="pointer-events-none absolute inset-0 bg-grid-dots opacity-30 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)]" />
       <div className="brand-glow pointer-events-none absolute -top-40 right-[-10%] h-[34rem] w-[34rem] rounded-full blur-3xl" />
-      <div className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 sm:gap-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="reveal-init">
           <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-4 py-1.5 text-xs text-ice/60">
             <span className="h-1.5 w-1.5 rounded-full bg-blue" />
             Inteligência tributária, financeira e estratégica
           </span>
-          <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.3rem]">
+          <h1 className="mt-6 font-display text-3xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl lg:text-[3.3rem]">
             Você paga tributos a mais e sente que esse dinheiro nunca volta?
           </h1>
-          <p className="mt-6 max-w-lg text-lg text-ice/70">
+          <p className="mt-5 max-w-lg text-base text-ice/70 sm:mt-6 sm:text-lg">
             Descubra se sua empresa está entre as que pagam mais do que
             deveria — com diagnóstico técnico gratuito, tecnologia própria e
             time multidisciplinar em Direito e Contabilidade.
           </p>
-          <div className="mt-9 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:flex-wrap sm:gap-4">
             <a
               href="#lead"
-              className="rounded-full bg-blue px-7 py-3 font-semibold text-white transition hover:brightness-110"
+              className="rounded-full bg-blue px-7 py-3 text-center font-semibold text-white transition hover:brightness-110"
             >
               Solicitar diagnóstico gratuito
             </a>
             <a
               href="#servicos"
-              className="rounded-full border border-line px-7 py-3 font-semibold text-ice/80 transition hover:border-ice/40 hover:text-ice"
+              className="rounded-full border border-line px-7 py-3 text-center font-semibold text-ice/80 transition hover:border-ice/40 hover:text-ice"
             >
               Ver serviços
             </a>
           </div>
         </div>
 
-        <div className="reveal-init rounded-2xl border border-line bg-white/[0.03] p-6 shadow-2xl shadow-black/30 sm:p-8">
+        <div className="reveal-init rounded-2xl border border-line bg-white/[0.03] p-5 shadow-2xl shadow-black/30 sm:p-8">
           <p className="section-label mb-1">Simulador</p>
           <h2 className="font-display text-xl">Estimativa de créditos recuperáveis</h2>
 

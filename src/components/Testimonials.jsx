@@ -9,7 +9,7 @@ const testimonials = [
 export default function Testimonials() {
   const ref = useReveal()
   return (
-    <section className="mx-auto max-w-6xl px-6 py-24">
+    <section className="mx-auto max-w-6xl px-5 sm:px-6 py-16 sm:py-24">
       <div ref={ref} className="reveal reveal-init mb-12 max-w-xl">
         <p className="section-label mb-3">Clientes</p>
         <h2 className="font-display text-3xl">O que dizem sobre o processo</h2>

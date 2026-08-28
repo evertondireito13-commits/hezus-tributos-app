@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer className="border-t border-line py-10">
-      <div className="mx-auto max-w-6xl px-6 text-sm text-ice/45">
+      <div className="mx-auto max-w-6xl px-5 text-sm text-ice/45 sm:px-6">
         <p className="font-display text-ice/70">HEZUS Capital e Tributos</p>
         <p className="mt-2">CNPJ: 00.000.000/0001-00 (placeholder — atualizar)</p>
         <p className="mt-1">contato@hezustributos.com.br · (00) 00000-0000</p>

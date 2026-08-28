@@ -9,8 +9,8 @@ const cards = [
 export default function ClientPanel() {
   const ref = useReveal()
   return (
-    <section id="painel" className="border-t border-line bg-white/[0.015] py-24">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="painel" className="border-t border-line bg-white/[0.015] py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-5 sm:px-6">
         <div ref={ref} className="reveal reveal-init mb-12 max-w-xl">
           <p className="section-label mb-3">Painel do cliente</p>
           <h2 className="font-display text-3xl">Acompanhe tudo em tempo real</h2>
