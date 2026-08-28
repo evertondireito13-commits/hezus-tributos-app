@@ -4,6 +4,7 @@ const LINKS = [
   { href: '#quem-somos', label: 'Quem somos' },
   { href: '#metodo', label: 'Método' },
   { href: '#servicos', label: 'Serviços' },
+  { href: '#atuacao', label: 'Atuação' },
   { href: '#painel', label: 'Painel do cliente' },
   { href: '#faq', label: 'FAQ' },
 ]
@@ -98,3 +99,4 @@ export default function Navbar() {
     </header>
   )
 }
+
