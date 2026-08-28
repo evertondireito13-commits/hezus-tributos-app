@@ -15,21 +15,10 @@ export default function Navbar() {
         </a>
         <div className="hidden gap-8 md:flex">
           {links.map((l) => (
-            
-              key={l.href}
-              href={l.href}
-              className="text-sm text-ice/70 transition hover:text-ice"
-            >
-              {l.label}
-            </a>
+            <a key={l.href} href={l.href} className="text-sm text-ice/70 transition hover:text-ice">{l.label}</a>
           ))}
         </div>
-        
-          href="#lead"
-          className="rounded-full bg-blue px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110"
-        >
-          Fazer diagnóstico
-        </a>
+        <a href="#lead" className="rounded-full bg-blue px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110">Fazer diagnóstico</a>
       </nav>
     </header>
   )
