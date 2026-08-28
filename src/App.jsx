@@ -12,6 +12,7 @@ import Testimonials from './components/Testimonials.jsx'
 import FAQ from './components/FAQ.jsx'
 import LeadForm from './components/LeadForm.jsx'
 import Footer from './components/Footer.jsx'
+import WhatsAppButton from './components/WhatsAppButton.jsx'
 
 export default function App() {
   return (
@@ -32,7 +33,7 @@ export default function App() {
         <LeadForm />
       </main>
       <Footer />
+      <WhatsAppButton />
     </div>
   )
 }
-
