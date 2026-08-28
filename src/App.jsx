@@ -11,6 +11,7 @@ import ClientPanel from './components/ClientPanel.jsx'
 import Tecnologia from './components/Tecnologia.jsx'
 import Testimonials from './components/Testimonials.jsx'
 import FAQ from './components/FAQ.jsx'
+import Contato from './components/Contato.jsx'
 import LeadForm from './components/LeadForm.jsx'
 import Footer from './components/Footer.jsx'
 import WhatsAppButton from './components/WhatsAppButton.jsx'
@@ -32,6 +33,7 @@ export default function App() {
         <Tecnologia />
         <Testimonials />
         <FAQ />
+        <Contato />
         <LeadForm />
       </main>
       <Footer />
@@ -39,3 +41,4 @@ export default function App() {
     </div>
   )
 }
+
