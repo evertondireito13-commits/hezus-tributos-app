@@ -6,6 +6,7 @@ export default {
       colors: {
         graphite: '#080B14',
         graphite2: '#111729',
+        paper: '#F7F8FC',
         ice: '#F5F7FB',
         blue: '#3E63F5',
         'blue-light': '#7C97FF',
