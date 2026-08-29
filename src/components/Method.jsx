@@ -1,4 +1,5 @@
 import useReveal from '../hooks/useReveal'
+import CtaButtons from './CtaButtons.jsx'
 
 const principles = [
   {
@@ -43,7 +44,10 @@ export default function Method() {
           </div>
         ))}
       </div>
+
+      <div className="mt-10 sm:mt-14">
+        <CtaButtons />
+      </div>
     </section>
   )
 }
-
