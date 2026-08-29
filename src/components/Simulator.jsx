@@ -6,27 +6,155 @@ const REGIMES = {
   real: { label: 'Lucro Real' },
 }
 
+const SEGMENTOS = {
+  industria: { label: 'Indústria' },
+  comercio: { label: 'Comércio' },
+  servicos: { label: 'Serviços' },
+  construcao: { label: 'Construção Civil' },
+  outro: { label: 'Outro / Não sei' },
+}
+
 const TESES = [
-  { id: 'icms-pis-cofins', label: 'Exclusão do ICMS da base de PIS/COFINS', min: 0.008, max: 0.02 },
-  { id: 'iss-pis-cofins', label: 'Exclusão do ISS da base de PIS/COFINS', min: 0.003, max: 0.008 },
-  { id: 'insumos-pis-cofins', label: 'Créditos de PIS/COFINS sobre insumos essenciais', min: 0.005, max: 0.015 },
-  { id: 'energia-pis-cofins', label: 'Créditos de PIS/COFINS sobre energia elétrica', min: 0.001, max: 0.004 },
-  { id: 'frete-pis-cofins', label: 'Créditos de PIS/COFINS sobre frete (insumo)', min: 0.001, max: 0.004 },
-  { id: 'embalagens-pis-cofins', label: 'Créditos de PIS/COFINS sobre embalagens', min: 0.001, max: 0.003 },
-  { id: 'icms-st', label: 'Recuperação de ICMS-ST pago a maior', min: 0.004, max: 0.012 },
-  { id: 'icms-energia', label: 'Créditos de ICMS sobre energia elétrica (indústria)', min: 0.002, max: 0.006 },
-  { id: 'icms-irpj-csll', label: 'Exclusão do ICMS da base de IRPJ/CSLL (subvenção)', min: 0.003, max: 0.01 },
-  { id: 'ipi-insumos', label: 'Créditos de IPI sobre insumos isentos/alíquota zero', min: 0.002, max: 0.006 },
-  { id: 'difal', label: 'Restituição de DIFAL pago indevidamente', min: 0.001, max: 0.005 },
-  { id: 'produtos-intermediarios', label: 'Créditos sobre produtos intermediários', min: 0.002, max: 0.006 },
-  { id: 'segregacao-simples', label: 'Segregação de receitas no Simples Nacional', min: 0.003, max: 0.012 },
-  { id: 'verbas-inss', label: 'Exclusão de verbas indenizatórias da base do INSS patronal', min: 0.002, max: 0.008 },
-  { id: 'cnae-iss', label: 'Revisão de enquadramento de CNAE/ISS', min: 0.001, max: 0.005 },
-  { id: 'software-pis-cofins', label: 'Créditos de PIS/COFINS sobre softwares e licenças', min: 0.001, max: 0.004 },
-  { id: 'publicidade-pis-cofins', label: 'Créditos de PIS/COFINS sobre propaganda e publicidade', min: 0.001, max: 0.003 },
-  { id: 'perdcomp', label: 'Compensação de créditos federais via PER/DCOMP', min: 0.002, max: 0.007 },
-  { id: 'seguros-pis-cofins', label: 'Créditos sobre seguros obrigatórios (insumo)', min: 0.001, max: 0.003 },
-  { id: 'ipi-saida', label: 'Revisão da base de cálculo do IPI na saída de produtos', min: 0.001, max: 0.004 },
+  {
+    id: 'icms-pis-cofins',
+    label: 'Exclusão do ICMS da base de PIS/COFINS',
+    explicacao: 'O ICMS que sua empresa paga não deveria entrar no cálculo do PIS/COFINS — esse entendimento já está consolidado e pode gerar créditos a recuperar.',
+    segments: ['industria', 'comercio'],
+    min: 0.008, max: 0.02,
+  },
+  {
+    id: 'iss-pis-cofins',
+    label: 'Exclusão do ISS da base de PIS/COFINS',
+    explicacao: 'Assim como o ICMS, o ISS pago por empresas de serviços também pode ser excluído da base de PIS/COFINS.',
+    segments: ['servicos', 'construcao'],
+    min: 0.003, max: 0.008,
+  },
+  {
+    id: 'insumos-pis-cofins',
+    label: 'Créditos de PIS/COFINS sobre insumos essenciais',
+    explicacao: 'Insumos essenciais usados diretamente na produção podem gerar créditos de PIS/COFINS que muitas empresas não aproveitam.',
+    segments: ['industria', 'construcao'],
+    min: 0.005, max: 0.015,
+  },
+  {
+    id: 'energia-pis-cofins',
+    label: 'Créditos de PIS/COFINS sobre energia elétrica',
+    explicacao: 'A energia elétrica usada na operação da empresa pode gerar créditos de PIS/COFINS, mesmo fora da produção direta.',
+    segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    min: 0.001, max: 0.004,
+  },
+  {
+    id: 'frete-pis-cofins',
+    label: 'Créditos de PIS/COFINS sobre frete (insumo)',
+    explicacao: 'O frete pago para transportar insumos ou mercadorias pode ser considerado insumo e gerar créditos de PIS/COFINS.',
+    segments: ['industria', 'comercio', 'construcao'],
+    min: 0.001, max: 0.004,
+  },
+  {
+    id: 'embalagens-pis-cofins',
+    label: 'Créditos de PIS/COFINS sobre embalagens',
+    explicacao: 'Embalagens usadas no processo produtivo ou na venda de mercadorias também podem gerar créditos de PIS/COFINS.',
+    segments: ['industria', 'comercio'],
+    min: 0.001, max: 0.003,
+  },
+  {
+    id: 'icms-st',
+    label: 'Recuperação de ICMS-ST pago a maior',
+    explicacao: 'Empresas que compram mercadorias com ICMS pago por substituição tributária costumam pagar a mais — esse valor pode ser recuperado.',
+    segments: ['comercio'],
+    min: 0.004, max: 0.012,
+  },
+  {
+    id: 'icms-energia',
+    label: 'Créditos de ICMS sobre energia elétrica (indústria)',
+    explicacao: 'Indústrias que usam energia elétrica no processo produtivo podem ter direito a créditos de ICMS sobre esse consumo.',
+    segments: ['industria'],
+    min: 0.002, max: 0.006,
+  },
+  {
+    id: 'icms-irpj-csll',
+    label: 'Exclusão do ICMS da base de IRPJ/CSLL (subvenção)',
+    explicacao: 'Incentivos e benefícios de ICMS concedidos pelo estado podem, em alguns casos, ser excluídos do cálculo do IRPJ e da CSLL.',
+    segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    min: 0.003, max: 0.01,
+  },
+  {
+    id: 'ipi-insumos',
+    label: 'Créditos de IPI sobre insumos isentos/alíquota zero',
+    explicacao: 'Indústrias que compram insumos isentos ou com alíquota zero de IPI podem ter direito a créditos que não estão sendo aproveitados.',
+    segments: ['industria'],
+    min: 0.002, max: 0.006,
+  },
+  {
+    id: 'difal',
+    label: 'Restituição de DIFAL pago indevidamente',
+    explicacao: 'Empresas que compram de outros estados podem ter pago DIFAL a mais em algumas operações — esse valor pode ser restituído.',
+    segments: ['comercio', 'industria'],
+    min: 0.001, max: 0.005,
+  },
+  {
+    id: 'produtos-intermediarios',
+    label: 'Créditos sobre produtos intermediários',
+    explicacao: 'Produtos usados no processo de fabricação, mesmo sem virar parte do produto final, também podem gerar créditos.',
+    segments: ['industria'],
+    min: 0.002, max: 0.006,
+  },
+  {
+    id: 'segregacao-simples',
+    label: 'Segregação de receitas no Simples Nacional',
+    explicacao: 'Empresas do Simples Nacional com mais de uma atividade às vezes pagam imposto a mais por não separar corretamente as receitas de cada uma.',
+    segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    min: 0.003, max: 0.012,
+  },
+  {
+    id: 'verbas-inss',
+    label: 'Exclusão de verbas indenizatórias da base do INSS patronal',
+    explicacao: 'Algumas verbas pagas aos funcionários não deveriam entrar no cálculo do INSS pago pela empresa, o que pode gerar créditos sobre a folha.',
+    segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    min: 0.002, max: 0.008,
+  },
+  {
+    id: 'cnae-iss',
+    label: 'Revisão de enquadramento de CNAE/ISS',
+    explicacao: 'Se o enquadramento de atividade usado pelo município estiver incorreto, sua empresa pode estar pagando uma alíquota de ISS maior do que deveria.',
+    segments: ['servicos', 'construcao'],
+    min: 0.001, max: 0.005,
+  },
+  {
+    id: 'software-pis-cofins',
+    label: 'Créditos de PIS/COFINS sobre softwares e licenças',
+    explicacao: 'Softwares e licenças usados na operação da empresa também podem gerar créditos de PIS/COFINS.',
+    segments: ['servicos', 'industria', 'comercio'],
+    min: 0.001, max: 0.004,
+  },
+  {
+    id: 'publicidade-pis-cofins',
+    label: 'Créditos de PIS/COFINS sobre propaganda e publicidade',
+    explicacao: 'Gastos com propaganda e publicidade, em certos casos, podem ser considerados insumo e gerar créditos de PIS/COFINS.',
+    segments: ['comercio', 'servicos'],
+    min: 0.001, max: 0.003,
+  },
+  {
+    id: 'perdcomp',
+    label: 'Compensação de créditos federais via PER/DCOMP',
+    explicacao: 'Créditos federais que sua empresa já tem direito podem ser usados para compensar outros impostos, em vez de ficar parados.',
+    segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    min: 0.002, max: 0.007,
+  },
+  {
+    id: 'seguros-pis-cofins',
+    label: 'Créditos sobre seguros obrigatórios (insumo)',
+    explicacao: 'Seguros obrigatórios contratados pela empresa também podem ser considerados insumo e gerar créditos de PIS/COFINS.',
+    segments: ['industria', 'comercio'],
+    min: 0.001, max: 0.003,
+  },
+  {
+    id: 'ipi-saida',
+    label: 'Revisão da base de cálculo do IPI na saída de produtos',
+    explicacao: 'O cálculo do IPI na saída de produtos às vezes é feito de forma equivocada, gerando pagamento a maior que pode ser revisto.',
+    segments: ['industria'],
+    min: 0.001, max: 0.004,
+  },
 ]
 
 const WHATSAPP_NUMBER = '5541995206026'
@@ -89,6 +217,20 @@ function isValidEmail(raw) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.trim())
 }
 
+// Deduz um segmento aproximado a partir da divisão (2 primeiros dígitos) do CNAE fiscal.
+// É só uma sugestão inicial — não substitui o diagnóstico técnico.
+function inferSegmentFromCnae(cnaeFiscal) {
+  if (!cnaeFiscal) return 'outro'
+  const code = String(cnaeFiscal).padStart(7, '0')
+  const div = Number(code.slice(0, 2))
+  if (Number.isNaN(div)) return 'outro'
+  if (div >= 5 && div <= 39) return 'industria'
+  if (div >= 41 && div <= 43) return 'construcao'
+  if (div >= 45 && div <= 47) return 'comercio'
+  if (div >= 49 && div <= 99) return 'servicos'
+  return 'outro'
+}
+
 export default function Simulator() {
   const [step, setStep] = useState(1)
   const [nome, setNome] = useState('')
@@ -102,11 +244,30 @@ export default function Simulator() {
   const [errors, setErrors] = useState({})
   const [emailStatus, setEmailStatus] = useState(null) // null | 'sending' | 'sent' | 'error'
 
+  // Identificação de segmento (passo novo, entre dados e teses)
+  const [segmentMode, setSegmentMode] = useState(null) // null | 'auto' | 'manual'
+  const [companySegment, setCompanySegment] = useState(null)
+  const [cnaeInfo, setCnaeInfo] = useState(null) // { codigo, descricao }
+  const [segmentLoading, setSegmentLoading] = useState(false)
+  const [segmentError, setSegmentError] = useState(null)
+
   const toggleTese = (id) => {
     setSelectedTeses((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
     )
   }
+
+  const isRecommendedTese = (t) => {
+    if (!companySegment) return false
+    if (t.id === 'segregacao-simples' && regime !== 'simples') return false
+    return t.segments.includes(companySegment)
+  }
+
+  const sortedTeses = useMemo(() => {
+    if (!companySegment) return TESES
+    return [...TESES].sort((a, b) => Number(isRecommendedTese(b)) - Number(isRecommendedTese(a)))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companySegment, regime])
 
   const { low, high, low5, high5, faturamentoAnual } = useMemo(() => {
     const anual = faturamento * 12
@@ -192,8 +353,41 @@ export default function Simulator() {
     if (validateStep1()) setStep(2)
   }
 
+  const fetchCnaeInfo = async () => {
+    setSegmentMode('auto')
+    setSegmentLoading(true)
+    setSegmentError(null)
+    try {
+      const digits = cnpj.replace(/\D/g, '')
+      const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${digits}`)
+      if (!res.ok) throw new Error('CNPJ não encontrado')
+      const data = await res.json()
+      const segmento = inferSegmentFromCnae(data.cnae_fiscal)
+      setCnaeInfo({ codigo: data.cnae_fiscal, descricao: data.cnae_fiscal_descricao })
+      setCompanySegment(segmento)
+    } catch (err) {
+      setSegmentError('Não conseguimos consultar automaticamente pelo CNPJ agora. Selecione seu segmento manualmente:')
+    } finally {
+      setSegmentLoading(false)
+    }
+  }
+
+  const handleSelectManualSegment = (key) => {
+    setSegmentMode('manual')
+    setCnaeInfo(null)
+    setCompanySegment(key)
+  }
+
+  const handlePularSegmento = () => {
+    setSegmentMode(null)
+    setCompanySegment(null)
+    setCnaeInfo(null)
+    setSegmentError(null)
+    setStep(3)
+  }
+
   const handleVerEstimativa = () => {
-    setStep(4)
+    setStep(5)
     const link = buildWhatsappLink()
     window.open(link, '_blank', 'noopener,noreferrer')
     sendLeadEmail()
@@ -203,7 +397,7 @@ export default function Simulator() {
     <div>
       <div className="mb-1 flex items-center justify-between">
         <p className="section-label">Simulador</p>
-        <p className="text-xs text-ice/40">Passo {step} de 4</p>
+        <p className="text-xs text-ice/40">Passo {step} de 5</p>
       </div>
       <h2 className="font-display text-xl">Estimativa de créditos recuperáveis</h2>
 
@@ -303,24 +497,80 @@ export default function Simulator() {
       {step === 2 && (
         <div className="mt-6">
           <p className="text-sm text-ice/60">
-            Selecione as teses que podem se aplicar à sua empresa:
+            Antes de escolher as hipóteses aplicáveis, vamos identificar o perfil da sua
+            empresa para sugerir as mais prováveis.
           </p>
-          <div className="mt-3 max-h-64 space-y-2 overflow-y-auto pr-1">
-            {TESES.map((t) => (
-              <label
-                key={t.id}
-                className="flex cursor-pointer items-start gap-2 rounded-lg border border-line bg-white/[0.02] p-2 text-xs text-ice/70 transition hover:border-ice/30"
+
+          {!segmentLoading && !companySegment && (
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={fetchCnaeInfo}
+                className="rounded-lg border border-blue bg-blue/10 px-4 py-3 text-left text-sm font-medium text-blue transition hover:brightness-110"
               >
-                <input
-                  type="checkbox"
-                  checked={selectedTeses.includes(t.id)}
-                  onChange={() => toggleTese(t.id)}
-                  className="mt-0.5 accent-blue"
-                />
-                <span>{t.label}</span>
-              </label>
-            ))}
-          </div>
+                Buscar automaticamente pelo CNPJ
+                <span className="mt-1 block text-xs font-normal text-ice/50">
+                  Consultamos o CNAE cadastrado da sua empresa.
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSegmentMode('manual')}
+                className="rounded-lg border border-line px-4 py-3 text-left text-sm font-medium text-ice/70 transition hover:border-ice/40"
+              >
+                Selecionar meu segmento manualmente
+                <span className="mt-1 block text-xs font-normal text-ice/50">
+                  Você escolhe entre algumas opções.
+                </span>
+              </button>
+            </div>
+          )}
+
+          {segmentLoading && (
+            <p className="mt-4 text-sm text-ice/50">Consultando o CNAE da sua empresa...</p>
+          )}
+
+          {segmentError && (
+            <p className="mt-4 text-xs text-red-400">{segmentError}</p>
+          )}
+
+          {(segmentMode === 'manual' || segmentError) && !companySegment && !segmentLoading && (
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {Object.entries(SEGMENTOS).map(([key, s]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handleSelectManualSegment(key)}
+                  className="rounded-lg border border-line px-3 py-2 text-xs font-medium text-ice/70 transition hover:border-ice/30"
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {companySegment && (
+            <div className="mt-4 rounded-lg border border-gold/30 bg-gold/10 p-4">
+              {cnaeInfo ? (
+                <p className="text-sm text-ice/70">
+                  Identificamos sua atividade principal como{' '}
+                  <span className="font-medium text-gold">{cnaeInfo.descricao}</span>. Vamos
+                  destacar as hipóteses mais prováveis para o segmento{' '}
+                  <span className="font-medium text-gold">{SEGMENTOS[companySegment].label}</span>.
+                </p>
+              ) : (
+                <p className="text-sm text-ice/70">
+                  Perfil selecionado:{' '}
+                  <span className="font-medium text-gold">{SEGMENTOS[companySegment].label}</span>.
+                  Vamos destacar as hipóteses mais prováveis para esse segmento.
+                </p>
+              )}
+              <p className="mt-2 text-xs text-ice/40">
+                Isso é só uma sugestão inicial — o diagnóstico técnico confirma o que
+                realmente se aplica à sua empresa.
+              </p>
+            </div>
+          )}
 
           <div className="mt-6 flex gap-3">
             <button
@@ -330,9 +580,76 @@ export default function Simulator() {
             >
               Voltar
             </button>
+            {companySegment ? (
+              <button
+                type="button"
+                onClick={() => setStep(3)}
+                className="w-full rounded-full bg-blue px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
+              >
+                Continuar
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handlePularSegmento}
+                className="w-full rounded-full border border-line px-6 py-3 text-sm font-semibold text-ice/70 transition hover:border-ice/40"
+              >
+                Pular essa etapa
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="mt-6">
+          <p className="text-sm text-ice/60">
+            {companySegment
+              ? 'Com base no perfil identificado, destacamos primeiro as hipóteses mais prováveis — mas você pode marcar quantas quiser:'
+              : 'Selecione as hipóteses que podem se aplicar à sua empresa:'}
+          </p>
+          <div className="mt-3 max-h-72 space-y-2 overflow-y-auto pr-1">
+            {sortedTeses.map((t) => (
+              <label
+                key={t.id}
+                className={`flex cursor-pointer items-start gap-2 rounded-lg border p-2 text-xs transition ${
+                  isRecommendedTese(t)
+                    ? 'border-gold/40 bg-gold/5'
+                    : 'border-line bg-white/[0.02] hover:border-ice/30'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedTeses.includes(t.id)}
+                  onChange={() => toggleTese(t.id)}
+                  className="mt-0.5 accent-blue"
+                />
+                <span>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium text-ice/80">{t.label}</span>
+                    {isRecommendedTese(t) && (
+                      <span className="rounded-full bg-gold/20 px-2 py-0.5 text-[10px] font-semibold text-gold">
+                        Recomendada pro seu perfil
+                      </span>
+                    )}
+                  </span>
+                  <span className="mt-1 block text-ice/50">{t.explicacao}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+
+          <div className="mt-6 flex gap-3">
             <button
               type="button"
-              onClick={() => setStep(3)}
+              onClick={() => setStep(2)}
+              className="w-full rounded-full border border-line px-6 py-3 text-sm font-semibold text-ice/70 transition hover:border-ice/40"
+            >
+              Voltar
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep(4)}
               disabled={selectedTeses.length === 0}
               className="w-full rounded-full bg-blue px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -340,12 +657,12 @@ export default function Simulator() {
             </button>
           </div>
           {selectedTeses.length === 0 && (
-            <p className="mt-2 text-xs text-ice/40">Selecione ao menos uma tese para continuar.</p>
+            <p className="mt-2 text-xs text-ice/40">Selecione ao menos uma hipótese para continuar.</p>
           )}
         </div>
       )}
 
-      {step === 3 && (
+      {step === 4 && (
         <div className="mt-6">
           <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-line bg-white/[0.02] p-3 text-sm text-ice/70">
             <input
@@ -364,7 +681,7 @@ export default function Simulator() {
           <div className="mt-6 flex gap-3">
             <button
               type="button"
-              onClick={() => setStep(2)}
+              onClick={() => setStep(3)}
               className="w-full rounded-full border border-line px-6 py-3 text-sm font-semibold text-ice/70 transition hover:border-ice/40"
             >
               Voltar
@@ -380,7 +697,7 @@ export default function Simulator() {
         </div>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="mt-6">
           <div className="rounded-xl border border-gold/30 bg-gold/10 p-5">
             <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada em 1 ano</p>
@@ -389,7 +706,7 @@ export default function Simulator() {
             </p>
             <p className="mt-1 text-xs text-ice/50">
               Com base em faturamento anual de {formatBRL(faturamentoAnual)} e {selectedTeses.length}{' '}
-              tese(s) selecionada(s).
+              hipótese(s) selecionada(s).
             </p>
           </div>
 
@@ -419,9 +736,8 @@ export default function Simulator() {
             {emailStatus === 'sent' && ' Também enviamos uma cópia por e-mail à nossa equipe.'}
           </p>
 
-          
-            <a 
-              href={buildWhatsappLink()}
+          <a
+            href={buildWhatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
@@ -430,7 +746,7 @@ export default function Simulator() {
           </a>
           <button
             type="button"
-            onClick={() => setStep(3)}
+            onClick={() => setStep(4)}
             className="mt-3 w-full rounded-full border border-line px-6 py-3 text-sm font-semibold text-ice/70 transition hover:border-ice/40"
           >
             Voltar
@@ -440,3 +756,4 @@ export default function Simulator() {
     </div>
   )
 }
+
