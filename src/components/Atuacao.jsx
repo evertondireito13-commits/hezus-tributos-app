@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import useReveal from '../hooks/useReveal'
+import CtaButtons from './CtaButtons.jsx'
 
 const AREAS = {
   tributario: {
@@ -105,7 +106,6 @@ export default function Atuacao() {
           </p>
         </div>
 
-        {/* Abas */}
         <div className="mb-10 flex flex-wrap gap-2 border-b border-line pb-px">
           {Object.entries(AREAS).map(([key, a]) => (
             <button
@@ -144,6 +144,8 @@ export default function Atuacao() {
           formal, articulamos com escritório de advocacia parceiro — sem
           conflito com o jurídico ou a contabilidade da sua empresa.
         </p>
+
+        <CtaButtons className="mt-10 sm:mt-14" />
       </div>
     </section>
   )
