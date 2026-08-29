@@ -60,12 +60,20 @@ export default function Simulator() {
     )
   }
 
-  const { low, high, faturamentoAnual } = useMemo(() => {
+  const { low, high, low5, high5, faturamentoAnual } = useMemo(() => {
     const anual = faturamento * 12
     const teses = TESES.filter((t) => selectedTeses.includes(t.id))
     const minSum = teses.reduce((acc, t) => acc + t.min, 0)
     const maxSum = teses.reduce((acc, t) => acc + t.max, 0)
-    return { low: anual * minSum, high: anual * maxSum, faturamentoAnual: anual }
+    const lowAnual = anual * minSum
+    const highAnual = anual * maxSum
+    return {
+      low: lowAnual,
+      high: highAnual,
+      low5: lowAnual * 5,
+      high5: highAnual * 5,
+      faturamentoAnual: anual,
+    }
   }, [faturamento, selectedTeses])
 
   const whatsappLink = useMemo(() => {
@@ -79,11 +87,12 @@ export default function Simulator() {
       `Regime: ${REGIMES[regime].label}`,
       `Faturamento médio mensal: ${formatBRL(faturamento)}`,
       `Teses selecionadas: ${teseLabels || '-'}`,
-      `Faixa estimada: ${formatBRL(low)} – ${formatBRL(high)}`,
+      `Faixa estimada (1 ano): ${formatBRL(low)} – ${formatBRL(high)}`,
+      `Faixa estimada (5 anos retroativos): ${formatBRL(low5)} – ${formatBRL(high5)}`,
       `Tenho SPED/EFDs dos últimos 5 anos: ${hasDocs ? 'Sim' : 'Não'}`,
     ].join('\n')
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
-  }, [nome, cnpj, regime, faturamento, selectedTeses, low, high, hasDocs])
+  }, [nome, cnpj, regime, faturamento, selectedTeses, low, high, low5, high5, hasDocs])
 
   return (
     <div>
@@ -236,7 +245,7 @@ export default function Simulator() {
       {step === 4 && (
         <div className="mt-6">
           <div className="rounded-xl border border-gold/30 bg-gold/10 p-5">
-            <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada de créditos recuperáveis</p>
+            <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada em 1 ano</p>
             <p className="mt-1 font-mono text-2xl font-semibold text-gold">
               {formatBRL(low)} – {formatBRL(high)}
             </p>
@@ -244,15 +253,31 @@ export default function Simulator() {
               Com base em faturamento anual de {formatBRL(faturamentoAnual)} e {selectedTeses.length}{' '}
               tese(s) selecionada(s).
             </p>
-            <p className="mt-3 text-xs text-ice/50">
-              Estimativa preliminar e ilustrativa, sujeita a diagnóstico técnico
-              detalhado. Não constitui garantia de valor ou de resultado.
+          </div>
+
+          <div className="mt-4 rounded-xl border border-blue/40 bg-blue/10 p-5">
+            <p className="text-xs uppercase tracking-wide text-ice/50">
+              Potencial acumulado em 5 anos retroativos
+            </p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-blue">
+              {formatBRL(low5)} – {formatBRL(high5)}
+            </p>
+            <p className="mt-1 text-xs text-ice/50">
+              Por lei, é possível pleitear a recuperação de créditos tributários dos
+              últimos 5 anos. Este valor projeta a faixa anual para o período completo,
+              assumindo faturamento estável — o valor real pode variar conforme o
+              histórico de faturamento da empresa.
             </p>
           </div>
 
+          <p className="mt-3 text-xs text-ice/50">
+            Estimativa preliminar e ilustrativa, sujeita a diagnóstico técnico
+            detalhado. Não constitui garantia de valor ou de resultado.
+          </p>
+
           
-            
-          <a href={whatsappLink}
+            <a
+              href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
