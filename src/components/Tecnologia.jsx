@@ -1,4 +1,5 @@
 import useReveal from '../hooks/useReveal'
+import CtaButtons from './CtaButtons.jsx'
 
 const SYSTEMS = [
   {
@@ -92,6 +93,8 @@ export default function Tecnologia() {
             argumento comercial.
           </p>
         </div>
+
+        <CtaButtons className="mt-10 sm:mt-14" />
       </div>
     </section>
   )
