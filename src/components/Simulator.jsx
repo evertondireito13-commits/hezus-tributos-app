@@ -244,12 +244,69 @@ export default function Simulator() {
   const [errors, setErrors] = useState({})
   const [emailStatus, setEmailStatus] = useState(null) // null | 'sending' | 'sent' | 'error'
 
+  // Verificação automática do nome da empresa a partir do CNPJ (Receita Federal via BrasilAPI).
+  // Enquanto o nome vier confirmado por essa busca, o campo fica travado (readOnly) para
+  // impedir que alguém digite o CNPJ de uma empresa e o nome de outra.
+  const [nomeAuto, setNomeAuto] = useState(false)
+  const [nomeLoading, setNomeLoading] = useState(false)
+  const [nomeFetchFailed, setNomeFetchFailed] = useState(false)
+
   // Identificação de segmento (passo novo, entre dados e teses)
   const [segmentMode, setSegmentMode] = useState(null) // null | 'auto' | 'manual'
   const [companySegment, setCompanySegment] = useState(null)
   const [cnaeInfo, setCnaeInfo] = useState(null) // { codigo, descricao }
   const [segmentLoading, setSegmentLoading] = useState(false)
   const [segmentError, setSegmentError] = useState(null)
+
+  // Busca automática do nome oficial assim que o CNPJ digitado for válido.
+  useEffect(() => {
+    const digits = cnpj.replace(/\D/g, '')
+
+    if (digits.length !== 14 || !isValidCNPJ(cnpj)) {
+      setNomeAuto(false)
+      setNomeFetchFailed(false)
+      setNomeLoading(false)
+      return undefined
+    }
+
+    let cancelled = false
+    setNomeLoading(true)
+    setNomeFetchFailed(false)
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${digits}`)
+        if (!res.ok) throw new Error('CNPJ não encontrado')
+        const data = await res.json()
+        if (cancelled) return
+        const nomeOficial = data.razao_social || data.nome_fantasia
+        if (nomeOficial) {
+          setNome(nomeOficial)
+          setNomeAuto(true)
+        } else {
+          setNomeAuto(false)
+          setNomeFetchFailed(true)
+        }
+      } catch {
+        if (!cancelled) {
+          setNomeAuto(false)
+          setNomeFetchFailed(true)
+        }
+      } finally {
+        if (!cancelled) setNomeLoading(false)
+      }
+    }, 500)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [cnpj])
+
+  const handleTrocarNomeManualmente = () => {
+    setNomeAuto(false)
+    setNome('')
+  }
 
   const toggleTese = (id) => {
     setSelectedTeses((prev) =>
@@ -341,7 +398,7 @@ export default function Simulator() {
 
   const validateStep1 = () => {
     const errs = {}
-        if (!nome.trim()) {
+    if (!nome.trim()) {
       errs.nome = 'Informe o nome da empresa.'
     } else if (!/[a-zA-ZÀ-ÿ]/.test(nome)) {
       errs.nome = 'O nome da empresa não pode ser só números.'
@@ -407,19 +464,7 @@ export default function Simulator() {
 
       {step === 1 && (
         <div className="mt-6">
-          <label className="block text-sm text-ice/60">Nome da empresa *</label>
-          <input
-            type="text"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            placeholder="Ex: Empresa Exemplo Ltda."
-            className={`mt-2 w-full rounded-lg border bg-white/[0.03] px-3 py-2 text-sm text-ice outline-none focus:border-blue ${
-              errors.nome ? 'border-red-500' : 'border-line'
-            }`}
-          />
-          {errors.nome && <p className="mt-1 text-xs text-red-400">{errors.nome}</p>}
-
-          <label className="mt-4 block text-sm text-ice/60">CNPJ *</label>
+          <label className="block text-sm text-ice/60">CNPJ *</label>
           <input
             type="text"
             value={cnpj}
@@ -430,6 +475,39 @@ export default function Simulator() {
             }`}
           />
           {errors.cnpj && <p className="mt-1 text-xs text-red-400">{errors.cnpj}</p>}
+
+          <label className="mt-4 block text-sm text-ice/60">Nome da empresa *</label>
+          <input
+            type="text"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            readOnly={nomeAuto}
+            placeholder={nomeLoading ? 'Verificando nome pelo CNPJ...' : 'Ex: Empresa Exemplo Ltda.'}
+            className={`mt-2 w-full rounded-lg border px-3 py-2 text-sm text-ice outline-none focus:border-blue ${
+              nomeAuto ? 'cursor-not-allowed bg-white/[0.06]' : 'bg-white/[0.03]'
+            } ${errors.nome ? 'border-red-500' : 'border-line'}`}
+          />
+          {nomeLoading && (
+            <p className="mt-1 text-xs text-ice/40">Verificando nome oficial na Receita Federal...</p>
+          )}
+          {nomeAuto && !nomeLoading && (
+            <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-blue">
+              Nome verificado automaticamente pelo CNPJ.
+              <button
+                type="button"
+                onClick={handleTrocarNomeManualmente}
+                className="underline text-ice/40 hover:text-ice/70"
+              >
+                não é sua empresa? corrigir o CNPJ
+              </button>
+            </p>
+          )}
+          {nomeFetchFailed && !nomeLoading && (
+            <p className="mt-1 text-xs text-ice/40">
+              Não conseguimos confirmar automaticamente — confira se o nome digitado corresponde ao CNPJ informado.
+            </p>
+          )}
+          {errors.nome && <p className="mt-1 text-xs text-red-400">{errors.nome}</p>}
 
           <label className="mt-4 block text-sm text-ice/60">Telefone (WhatsApp ou fixo) *</label>
           <input
@@ -760,4 +838,3 @@ export default function Simulator() {
     </div>
   )
 }
-
