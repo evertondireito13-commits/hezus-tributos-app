@@ -33,7 +33,7 @@ const WHATSAPP_NUMBER = '5541995206026'
 
 // Configuração do EmailJS (envio automático de e-mail para hezus.simulador@gmail.com)
 const EMAILJS_SERVICE_ID = 'service_8wpx9uq'
-const EMAILJS_TEMPLATE_ID = 'template_a22m6xa'
+const EMAILJS_TEMPLATE_ID = 'template_glqg928'
 const EMAILJS_PUBLIC_KEY = 'Sr1K9lFnEDRGBozQN'
 
 function formatBRL(value) {
