@@ -3,7 +3,6 @@ const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponen
 
 export default function CtaButtons({ align = 'left', className = '' }) {
   const justify = align === 'center' ? 'justify-center' : 'justify-start'
-
   return (
     <div className={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${justify} ${className}`}>
       
