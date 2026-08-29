@@ -31,6 +31,11 @@ const TESES = [
 
 const WHATSAPP_NUMBER = '5541995206026'
 
+// Configuração do EmailJS (envio automático de e-mail para hezus.simulador@gmail.com)
+const EMAILJS_SERVICE_ID = 'service_8wpx9uq'
+const EMAILJS_TEMPLATE_ID = 'template_glqg928'
+const EMAILJS_PUBLIC_KEY = 'Sr1K9lFnEDRGBozQN'
+
 function formatBRL(value) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
 }
@@ -45,14 +50,57 @@ function formatCNPJ(raw) {
   return out
 }
 
+function isValidCNPJ(raw) {
+  const c = raw.replace(/\D/g, '')
+  if (c.length !== 14 || /^(\d)\1{13}$/.test(c)) return false
+  const calc = (base) => {
+    let sum = 0
+    let pos = base.length - 7
+    for (let i = base.length; i >= 1; i--) {
+      sum += Number(base[base.length - i]) * pos--
+      if (pos < 2) pos = 9
+    }
+    const result = sum % 11
+    return result < 2 ? 0 : 11 - result
+  }
+  const d1 = calc(c.slice(0, 12))
+  const d2 = calc(c.slice(0, 12) + d1)
+  return c === c.slice(0, 12) + String(d1) + String(d2)
+}
+
+function formatPhone(raw) {
+  const digits = raw.replace(/\D/g, '').slice(0, 11)
+  if (digits.length <= 10) {
+    return digits.replace(/^(\d{2})(\d{4})(\d{0,4})$/, (m, a, b, c) =>
+      c ? `(${a}) ${b}-${c}` : b ? `(${a}) ${b}` : `(${a}`
+    )
+  }
+  return digits.replace(/^(\d{2})(\d{5})(\d{0,4})$/, (m, a, b, c) =>
+    c ? `(${a}) ${b}-${c}` : b ? `(${a}) ${b}` : `(${a}`
+  )
+}
+
+function isValidPhone(raw) {
+  const digits = raw.replace(/\D/g, '')
+  return digits.length === 10 || digits.length === 11
+}
+
+function isValidEmail(raw) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.trim())
+}
+
 export default function Simulator() {
   const [step, setStep] = useState(1)
   const [nome, setNome] = useState('')
   const [cnpj, setCnpj] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [email, setEmail] = useState('')
   const [regime, setRegime] = useState('presumido')
   const [faturamento, setFaturamento] = useState(150000)
   const [selectedTeses, setSelectedTeses] = useState([])
   const [hasDocs, setHasDocs] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [emailStatus, setEmailStatus] = useState(null) // null | 'sending' | 'sent' | 'error'
 
   const toggleTese = (id) => {
     setSelectedTeses((prev) =>
@@ -76,14 +124,16 @@ export default function Simulator() {
     }
   }, [faturamento, selectedTeses])
 
-  const whatsappLink = useMemo(() => {
+  const buildWhatsappLink = () => {
     const teseLabels = TESES.filter((t) => selectedTeses.includes(t.id))
       .map((t) => t.label)
       .join('; ')
     const message = [
       'Olá! Fiz uma simulação no site da Hezus e gostaria de agendar um diagnóstico.',
-      `Empresa: ${nome || '-'}`,
-      `CNPJ: ${cnpj || '-'}`,
+      `Empresa: ${nome}`,
+      `CNPJ: ${cnpj}`,
+      `Telefone: ${telefone}`,
+      `E-mail: ${email}`,
       `Regime: ${REGIMES[regime].label}`,
       `Faturamento médio mensal: ${formatBRL(faturamento)}`,
       `Teses selecionadas: ${teseLabels || '-'}`,
@@ -92,7 +142,62 @@ export default function Simulator() {
       `Tenho SPED/EFDs dos últimos 5 anos: ${hasDocs ? 'Sim' : 'Não'}`,
     ].join('\n')
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
-  }, [nome, cnpj, regime, faturamento, selectedTeses, low, high, low5, high5, hasDocs])
+  }
+
+  const sendLeadEmail = async () => {
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) return
+    const teseLabels = TESES.filter((t) => selectedTeses.includes(t.id))
+      .map((t) => t.label)
+      .join(', ')
+    setEmailStatus('sending')
+    try {
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: EMAILJS_SERVICE_ID,
+          template_id: EMAILJS_TEMPLATE_ID,
+          user_id: EMAILJS_PUBLIC_KEY,
+          template_params: {
+            nome,
+            cnpj,
+            telefone,
+            email,
+            regime: REGIMES[regime].label,
+            faturamento_mensal: formatBRL(faturamento),
+            teses: teseLabels || '-',
+            faixa_1_ano: `${formatBRL(low)} – ${formatBRL(high)}`,
+            faixa_5_anos: `${formatBRL(low5)} – ${formatBRL(high5)}`,
+            tem_sped: hasDocs ? 'Sim' : 'Não',
+          },
+        }),
+      })
+      setEmailStatus(res.ok ? 'sent' : 'error')
+    } catch {
+      setEmailStatus('error')
+    }
+  }
+
+  const validateStep1 = () => {
+    const errs = {}
+    if (!nome.trim()) errs.nome = 'Informe o nome da empresa.'
+    if (!isValidCNPJ(cnpj)) errs.cnpj = 'CNPJ inválido.'
+    if (!isValidPhone(telefone)) errs.telefone = 'Informe um telefone válido (WhatsApp ou fixo).'
+    if (!isValidEmail(email)) errs.email = 'Informe um e-mail válido.'
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
+  const handleAvancarStep1 = () => {
+    if (validateStep1()) setStep(2)
+  }
+
+  const handleVerEstimativa = () => {
+    setStep(4)
+    const link = buildWhatsappLink()
+    window.open(link, '_blank', 'noopener,noreferrer')
+    sendLeadEmail()
+  }
 
   return (
     <div>
@@ -104,23 +209,53 @@ export default function Simulator() {
 
       {step === 1 && (
         <div className="mt-6">
-          <label className="block text-sm text-ice/60">Nome da empresa</label>
+          <label className="block text-sm text-ice/60">Nome da empresa *</label>
           <input
             type="text"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             placeholder="Ex: Empresa Exemplo Ltda."
-            className="mt-2 w-full rounded-lg border border-line bg-white/[0.03] px-3 py-2 text-sm text-ice outline-none focus:border-blue"
+            className={`mt-2 w-full rounded-lg border bg-white/[0.03] px-3 py-2 text-sm text-ice outline-none focus:border-blue ${
+              errors.nome ? 'border-red-500' : 'border-line'
+            }`}
           />
+          {errors.nome && <p className="mt-1 text-xs text-red-400">{errors.nome}</p>}
 
-          <label className="mt-4 block text-sm text-ice/60">CNPJ</label>
+          <label className="mt-4 block text-sm text-ice/60">CNPJ *</label>
           <input
             type="text"
             value={cnpj}
             onChange={(e) => setCnpj(formatCNPJ(e.target.value))}
             placeholder="00.000.000/0000-00"
-            className="mt-2 w-full rounded-lg border border-line bg-white/[0.03] px-3 py-2 text-sm text-ice outline-none focus:border-blue"
+            className={`mt-2 w-full rounded-lg border bg-white/[0.03] px-3 py-2 text-sm text-ice outline-none focus:border-blue ${
+              errors.cnpj ? 'border-red-500' : 'border-line'
+            }`}
           />
+          {errors.cnpj && <p className="mt-1 text-xs text-red-400">{errors.cnpj}</p>}
+
+          <label className="mt-4 block text-sm text-ice/60">Telefone (WhatsApp ou fixo) *</label>
+          <input
+            type="text"
+            value={telefone}
+            onChange={(e) => setTelefone(formatPhone(e.target.value))}
+            placeholder="(41) 99999-9999"
+            className={`mt-2 w-full rounded-lg border bg-white/[0.03] px-3 py-2 text-sm text-ice outline-none focus:border-blue ${
+              errors.telefone ? 'border-red-500' : 'border-line'
+            }`}
+          />
+          {errors.telefone && <p className="mt-1 text-xs text-red-400">{errors.telefone}</p>}
+
+          <label className="mt-4 block text-sm text-ice/60">E-mail *</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="contato@empresa.com.br"
+            className={`mt-2 w-full rounded-lg border bg-white/[0.03] px-3 py-2 text-sm text-ice outline-none focus:border-blue ${
+              errors.email ? 'border-red-500' : 'border-line'
+            }`}
+          />
+          {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
 
           <label className="mt-4 block text-sm text-ice/60">Regime tributário</label>
           <div className="mt-2 grid grid-cols-3 gap-2">
@@ -154,11 +289,14 @@ export default function Simulator() {
 
           <button
             type="button"
-            onClick={() => setStep(2)}
+            onClick={handleAvancarStep1}
             className="mt-6 w-full rounded-full bg-blue px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
           >
             Avançar
           </button>
+          <p className="mt-2 text-center text-xs text-ice/40">
+            * Campos obrigatórios — usados para enviar seu diagnóstico.
+          </p>
         </div>
       )}
 
@@ -233,7 +371,7 @@ export default function Simulator() {
             </button>
             <button
               type="button"
-              onClick={() => setStep(4)}
+              onClick={handleVerEstimativa}
               className="w-full rounded-full bg-blue px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
             >
               Ver estimativa
@@ -275,14 +413,20 @@ export default function Simulator() {
             detalhado. Não constitui garantia de valor ou de resultado.
           </p>
 
+          <p className="mt-3 text-xs text-ice/40">
+            Sua conversa no WhatsApp foi aberta em uma nova aba com os dados
+            preenchidos — é só confirmar o envio por lá.
+            {emailStatus === 'sent' && ' Também enviamos uma cópia por e-mail à nossa equipe.'}
+          </p>
+
           
             <a
-              href={whatsappLink}
+              href={buildWhatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
           >
-            Falar com um consultor agora
+            Abrir conversa no WhatsApp novamente
           </a>
           <button
             type="button"
