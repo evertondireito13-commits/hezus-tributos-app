@@ -17,14 +17,9 @@
 
 ## Estrutura do código
 - `src/App.jsx` — monta a página inteira, na ordem: Navbar, Hero, TrustBar, QuemSomos, Method, MethodDeep, Services, Atuacao, HowItWorks, ClientPanel, Tecnologia, Testimonials, FAQ, Contato, LeadForm, Footer, WhatsAppButton.
-- `src/components/` — um arquivo por seção (17 componentes).
+- `src/components/` — um arquivo por seção (17 componentes), incluindo `CtaButtons.jsx` (botões de CTA reutilizáveis: "Quero fazer meu diagnóstico" e "Entrar em contato agora" via WhatsApp).
 - `src/hooks/useReveal.js` — hook de animação de entrada (scroll reveal).
 - `tailwind.config.js` — paleta e tipografia da marca.
-
-## Identidade visual (atualizado)
-- Cores: `graphite #080B14` (fundo), `ice #F5F7FB` (texto claro), `blue #3E63F5` / `blue-light #7C97FF` (cor principal da marca), **`gold #C9A24B`** (cor de destaque, usada no valor estimado do simulador do Hero — "momento do dinheiro" — e no marcador dos cards de Serviços).
-- Tipografia: **mantida a original** — display e body em Manrope (foi testada uma troca do título pra fonte serifada Fraunces, mas o Everton não gostou e pediu pra reverter; ficou só Manrope + JetBrains Mono, como sempre foi).
-- Cards de Serviços (`Services.jsx`) não usam mais numeração "01/02/03..." (não fazia sentido, não é uma sequência) — agora usam um marcador visual (bolinha dourada).
 
 ## Serviços oferecidos (seção Services.jsx)
 Diagnóstico tributário · Recuperação de créditos · Planejamento tributário · BPO fiscal · Compliance e auditoria · Consultoria em licitações · Regularização cadastral · Educação tributária.
@@ -40,16 +35,13 @@ Mockup ilustrativo (dados fake: "Empresa Exemplo Ltda.") mostrando créditos ide
 - Campos: Nome, Empresa, Faturamento aproximado, WhatsApp.
 - **Pendência técnica confirmada no próprio README**: o formulário ainda não está conectado a nenhum destino real (hoje só faz `setSent(true)` local, sem salvar em lugar nenhum). Precisa ligar a algo como Supabase, planilha ou e-mail antes de publicar.
 
+## Incidentes resolvidos
+- **29/08/2026 — CtaButtons.jsx quebrado (build failing no Lovable):** uma edição anterior via Lovable removeu acidentalmente as tags de abertura `<a` dos dois links do componente (ficaram só os atributos soltos, tipo `href="#lead"` sem `<a` na frente), causando erro de parsing JSX (`Expected corresponding JSX closing tag for <div>`) e falha no build/publicação. Corrigido reescrevendo o componente inteiro direto no GitHub (editor web), com as duas tags `<a>` devidamente abertas e fechadas. Vale ficar atento: se outros componentes foram editados na mesma leva pelo Lovable, podem ter o mesmo tipo de corte.
+
 ## Pendências já identificadas no próprio repo (README.md)
 1. Conectar o formulário de lead (`LeadForm.jsx`) a um destino real.
 2. Substituir os placeholders de CNPJ, contato e depoimentos no rodapé e na seção de depoimentos (`Testimonials.jsx`).
 3. Revisão de um advogado nas promessas de prazo e recuperação de crédito, antes de publicar.
-
-## Melhorias visuais — status final desta rodada
-- Testado: troca da fonte de título pra Fraunces → **revertido a pedido do Everton**, não gostou, ficou Manrope mesmo.
-- Mantido: dourado (`gold`) no valor estimado do simulador do Hero (`Hero.jsx`) e marcador dourado nos cards de Serviços (`Services.jsx`), no lugar da numeração 01/02/03.
-- **Arquivos que precisam estar colados no GitHub, nessa versão final**: só `src/components/Hero.jsx` e `src/components/Services.jsx`. `index.html` e `tailwind.config.js` continuam iguais ao original (sem Fraunces).
-- Status: aguardando confirmação do Everton de que colou a versão final desses 2 arquivos no GitHub.
 
 ## Regras de linguagem do projeto (importante manter sempre)
 | Evitar | Usar no lugar |
