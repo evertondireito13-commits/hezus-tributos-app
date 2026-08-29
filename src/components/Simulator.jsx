@@ -341,7 +341,11 @@ export default function Simulator() {
 
   const validateStep1 = () => {
     const errs = {}
-    if (!nome.trim()) errs.nome = 'Informe o nome da empresa.'
+        if (!nome.trim()) {
+      errs.nome = 'Informe o nome da empresa.'
+    } else if (!/[a-zA-ZÀ-ÿ]/.test(nome)) {
+      errs.nome = 'O nome da empresa não pode ser só números.'
+    }
     if (!isValidCNPJ(cnpj)) errs.cnpj = 'CNPJ inválido.'
     if (!isValidPhone(telefone)) errs.telefone = 'Informe um telefone válido (WhatsApp ou fixo).'
     if (!isValidEmail(email)) errs.email = 'Informe um e-mail válido.'
