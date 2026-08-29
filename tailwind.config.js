@@ -14,7 +14,7 @@ export default {
         line: 'rgba(140,165,255,0.14)',
       },
       fontFamily: {
-        display: ['"Manrope"', 'sans-serif'],
+        display: ['"Fraunces"', 'serif'],
         body: ['"Manrope"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
