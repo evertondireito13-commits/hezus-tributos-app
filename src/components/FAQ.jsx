@@ -3,6 +3,22 @@ import useReveal from '../hooks/useReveal'
 
 const faqs = [
   {
+    q: 'Quanto custa o serviço e como funciona o pagamento?',
+    a: 'Trabalhamos exclusivamente com taxa de êxito: você só paga se recuperarmos recursos para a sua empresa. Sem recuperação, sem custo adicional.',
+  },
+  {
+    q: 'Como vocês garantem que vão encontrar oportunidades na minha empresa?',
+    a: 'Não garantimos resultado — isso ninguém pode prometer com seriedade. O que temos é histórico: em 96% das empresas que já analisamos, encontramos oportunidade, mesmo em casos que já haviam passado por revisões anteriores. Nossos sócios somam mais de 5 anos de experiência combinada em consultoria tributária e licitações, e a legislação evolui constantemente, criando novas possibilidades.',
+  },
+  {
+    q: 'Por que escolher a Hezus em vez de outras consultorias?',
+    a: 'Somos especialistas exclusivamente em diagnóstico e recuperação tributária, não generalistas. Combinamos experiência técnica com metodologia própria, testada em centenas de casos, e uma equipe multidisciplinar que cuida do diagnóstico à operacionalização — sem deixar o trabalho pela metade.',
+  },
+  {
+    q: 'Vocês têm experiência no meu setor de atividade?',
+    a: 'Atendemos empresas de todos os portes e setores — indústria, comércio, serviços, agronegócio, tecnologia e saúde. Cada setor tem particularidades tributárias específicas, e nossa equipe trabalha em cima delas.',
+  },
+  {
     q: 'Vocês atuam em processos judiciais?',
     a: 'Não. Não somos um escritório de advocacia. Cuidamos do diagnóstico técnico e do cálculo de créditos; quando há necessidade de atuação judicial, trabalhamos em conjunto com escritório de advocacia parceiro.',
   },
@@ -54,4 +70,3 @@ export default function FAQ() {
     </section>
   )
 }
-
