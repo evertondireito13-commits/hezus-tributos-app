@@ -63,9 +63,7 @@ export default function Services() {
                 onClick={() => setOpen(isOpen ? null : i)}
                 className="rounded-xl border border-line bg-graphite p-5 text-left transition hover:border-blue/30"
               >
-                <span className="font-mono text-xs text-blue">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
+                <span className="block h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
                 <h3 className="mt-2 font-display text-base">{s.title}</h3>
                 <p
                   className={`mt-2 overflow-hidden text-xs leading-relaxed text-ice/60 transition-all ${
@@ -85,4 +83,3 @@ export default function Services() {
     </section>
   )
 }
-
