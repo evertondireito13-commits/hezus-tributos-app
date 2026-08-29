@@ -33,7 +33,8 @@ const WHATSAPP_NUMBER = '5541995206026'
 
 // Configuração do EmailJS (envio automático de e-mail para hezus.simulador@gmail.com)
 const EMAILJS_SERVICE_ID = 'service_8wpx9uq'
-const EMAILJS_TEMPLATE_ID = 'template_glqg928'
+const EMAILJS_TEMPLATE_ID = 'template_a22m6xa' // notificação interna (hezus.simulador@gmail.com)
+const EMAILJS_CLIENT_TEMPLATE_ID = 'template_glqg928' // confirmação para o cliente
 const EMAILJS_PUBLIC_KEY = 'Sr1K9lFnEDRGBozQN'
 
 function formatBRL(value) {
@@ -149,30 +150,40 @@ export default function Simulator() {
     const teseLabels = TESES.filter((t) => selectedTeses.includes(t.id))
       .map((t) => t.label)
       .join(', ')
+    const templateParams = {
+      nome,
+      cnpj,
+      telefone,
+      email,
+      regime: REGIMES[regime].label,
+      faturamento_mensal: formatBRL(faturamento),
+      teses: teseLabels || '-',
+      faixa_1_ano: `${formatBRL(low)} – ${formatBRL(high)}`,
+      faixa_5_anos: `${formatBRL(low5)} – ${formatBRL(high5)}`,
+      tem_sped: hasDocs ? 'Sim' : 'Não',
+    }
     setEmailStatus('sending')
     try {
-      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: EMAILJS_SERVICE_ID,
-          template_id: EMAILJS_TEMPLATE_ID,
-          user_id: EMAILJS_PUBLIC_KEY,
-          template_params: {
-            nome,
-            cnpj,
-            telefone,
-            email,
-            regime: REGIMES[regime].label,
-            faturamento_mensal: formatBRL(faturamento),
-            teses: teseLabels || '-',
-            faixa_1_ano: `${formatBRL(low)} – ${formatBRL(high)}`,
-            faixa_5_anos: `${formatBRL(low5)} – ${formatBRL(high5)}`,
-            tem_sped: hasDocs ? 'Sim' : 'Não',
-          },
-        }),
-      })
-      setEmailStatus(res.ok ? 'sent' : 'error')
+      const sendOne = (templateId) =>
+        fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service_id: EMAILJS_SERVICE_ID,
+            template_id: templateId,
+            user_id: EMAILJS_PUBLIC_KEY,
+            template_params: templateParams,
+          }),
+        })
+
+      const results = await Promise.all([
+        sendOne(EMAILJS_TEMPLATE_ID),
+        EMAILJS_CLIENT_TEMPLATE_ID
+          ? sendOne(EMAILJS_CLIENT_TEMPLATE_ID)
+          : Promise.resolve({ ok: true }),
+      ])
+
+      setEmailStatus(results.every((r) => r.ok) ? 'sent' : 'error')
     } catch {
       setEmailStatus('error')
     }
