@@ -251,7 +251,8 @@ export default function Simulator() {
           </div>
 
           
-            href={whatsappLink}
+            
+          <a href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
