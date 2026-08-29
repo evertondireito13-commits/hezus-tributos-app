@@ -79,9 +79,9 @@ export default function Hero() {
           />
           <p className="mt-1 font-mono text-sm text-ice/70">{formatBRL(faturamento)}/mês</p>
 
-          <div className="mt-6 rounded-xl border border-blue/30 bg-blue/10 p-5">
+          <div className="mt-6 rounded-xl border border-gold/30 bg-gold/10 p-5">
             <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada</p>
-            <p className="mt-1 font-mono text-2xl font-semibold text-blue-light">
+            <p className="mt-1 font-mono text-2xl font-semibold text-gold">
               {formatBRL(low)} – {formatBRL(high)}
             </p>
             <p className="mt-2 text-xs text-ice/50">
@@ -94,4 +94,3 @@ export default function Hero() {
     </section>
   )
 }
-
