@@ -5,6 +5,7 @@ import Numbers from './components/Numbers.jsx'
 import QuemSomos from './components/QuemSomos.jsx'
 import Method from './components/Method.jsx'
 import MethodDeep from './components/MethodDeep.jsx'
+import Metodologia from './components/Metodologia.jsx'
 import Atuacao from './components/Atuacao.jsx'
 import Services from './components/Services.jsx'
 import HowItWorks from './components/HowItWorks.jsx'
@@ -28,6 +29,7 @@ export default function App() {
         <QuemSomos />
         <Method />
         <MethodDeep />
+        <Metodologia />
         <Services />
         <Atuacao />
         <HowItWorks />
