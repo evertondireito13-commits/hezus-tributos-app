@@ -14,20 +14,8 @@ const SEGMENTOS = {
   outro: { label: 'Outro / Não sei' },
 }
 
-// Alíquota combinada do PIS/COFINS no regime não-cumulativo (Lei 10.637/2002 e
-// 10.833/2003) — só se aplica a empresas do Lucro Real. É a única alíquota fixa
-// em lei usada nas contas abaixo; as demais faixas seguem estimativa de mercado.
 const PIS_COFINS_NAO_CUMULATIVO = 0.0925
 
-// Cada hipótese carrega "regimes" (em quais regimes ela é juridicamente aplicável
-// — evita sugerir crédito de PIS/COFINS não-cumulativo pra quem está no Simples,
-// por exemplo) e uma faixa min/max estimada como % do faturamento anual. Para as
-// hipóteses de crédito de PIS/COFINS, a faixa é derivada de forma explícita:
-// alíquota de 9,25% × uma estimativa conservadora de quanto aquela categoria de
-// custo representa do faturamento (ex.: insumos essenciais entre 8% e 20% do
-// faturamento em empresas industriais). Essas proporções de custo são estimativas
-// de mercado, não dado calibrado com portfólio real — ajustar aqui se houver
-// histórico melhor.
 const TESES = [
   {
     id: 'icms-pis-cofins',
@@ -193,7 +181,6 @@ const TESES = [
 
 const WHATSAPP_NUMBER = '5541995206026'
 
-// Configuração do EmailJS (envio automático de e-mail para hezus.simulador@gmail.com)
 const EMAILJS_SERVICE_ID = 'service_8wpx9uq'
 const EMAILJS_TEMPLATE_ID = 'template_glqg928'
 const EMAILJS_PUBLIC_KEY = 'Sr1K9lFnEDRGBozQN'
@@ -251,8 +238,6 @@ function isValidEmail(raw) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.trim())
 }
 
-// Deduz um segmento aproximado a partir da divisão (2 primeiros dígitos) do CNAE fiscal.
-// É só uma sugestão inicial — não substitui o diagnóstico técnico.
 function inferSegmentFromCnae(cnaeFiscal) {
   if (!cnaeFiscal) return 'outro'
   const code = String(cnaeFiscal).padStart(7, '0')
@@ -276,23 +261,18 @@ export default function Simulator() {
   const [selectedTeses, setSelectedTeses] = useState([])
   const [hasDocs, setHasDocs] = useState(false)
   const [errors, setErrors] = useState({})
-  const [emailStatus, setEmailStatus] = useState(null) // null | 'sending' | 'sent' | 'error'
+  const [emailStatus, setEmailStatus] = useState(null)
 
-  // Verificação automática do nome da empresa a partir do CNPJ (Receita Federal via BrasilAPI).
-  // Enquanto o nome vier confirmado por essa busca, o campo fica travado (readOnly) para
-  // impedir que alguém digite o CNPJ de uma empresa e o nome de outra.
   const [nomeAuto, setNomeAuto] = useState(false)
   const [nomeLoading, setNomeLoading] = useState(false)
   const [nomeFetchFailed, setNomeFetchFailed] = useState(false)
 
-  // Identificação de segmento (passo novo, entre dados e teses)
-  const [segmentMode, setSegmentMode] = useState(null) // null | 'auto' | 'manual'
+  const [segmentMode, setSegmentMode] = useState(null)
   const [companySegment, setCompanySegment] = useState(null)
-  const [cnaeInfo, setCnaeInfo] = useState(null) // { codigo, descricao }
+  const [cnaeInfo, setCnaeInfo] = useState(null)
   const [segmentLoading, setSegmentLoading] = useState(false)
   const [segmentError, setSegmentError] = useState(null)
 
-  // Busca automática do nome oficial assim que o CNPJ digitado for válido.
   useEffect(() => {
     const digits = cnpj.replace(/\D/g, '')
 
@@ -348,8 +328,6 @@ export default function Simulator() {
     )
   }
 
-  // Só mostramos hipóteses juridicamente aplicáveis ao regime tributário escolhido
-  // (ex.: crédito de PIS/COFINS não-cumulativo não aparece pra quem está no Simples).
   const teseAplicavelAoRegime = (t) => t.regimes.includes(regime)
 
   const isRecommendedTese = (t) => {
@@ -370,7 +348,6 @@ export default function Simulator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companySegment, regime, visibleTeses])
 
-  // Se o regime mudar e alguma hipótese selecionada deixar de ser aplicável, remove ela.
   useEffect(() => {
     setSelectedTeses((prev) => prev.filter((id) => TESES.find((t) => t.id === id)?.regimes.includes(regime)))
   }, [regime])
@@ -870,14 +847,7 @@ export default function Simulator() {
             {emailStatus === 'sent' && ' Também enviamos uma cópia por e-mail à nossa equipe.'}
           </p>
 
-          <a
-            href={buildWhatsappLink()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
-          >
-            Abrir conversa no WhatsApp novamente
-          </a>
+          <a href={buildWhatsappLink()} target="_blank" rel="noopener noreferrer" className="mt-4 block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110">Abrir conversa no WhatsApp novamente</a>
           <button
             type="button"
             onClick={() => setStep(4)}
