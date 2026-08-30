@@ -14,145 +14,179 @@ const SEGMENTOS = {
   outro: { label: 'Outro / Não sei' },
 }
 
+// Alíquota combinada do PIS/COFINS no regime não-cumulativo (Lei 10.637/2002 e
+// 10.833/2003) — só se aplica a empresas do Lucro Real. É a única alíquota fixa
+// em lei usada nas contas abaixo; as demais faixas seguem estimativa de mercado.
+const PIS_COFINS_NAO_CUMULATIVO = 0.0925
+
+// Cada hipótese carrega "regimes" (em quais regimes ela é juridicamente aplicável
+// — evita sugerir crédito de PIS/COFINS não-cumulativo pra quem está no Simples,
+// por exemplo) e uma faixa min/max estimada como % do faturamento anual. Para as
+// hipóteses de crédito de PIS/COFINS, a faixa é derivada de forma explícita:
+// alíquota de 9,25% × uma estimativa conservadora de quanto aquela categoria de
+// custo representa do faturamento (ex.: insumos essenciais entre 8% e 20% do
+// faturamento em empresas industriais). Essas proporções de custo são estimativas
+// de mercado, não dado calibrado com portfólio real — ajustar aqui se houver
+// histórico melhor.
 const TESES = [
   {
     id: 'icms-pis-cofins',
     label: 'Exclusão do ICMS da base de PIS/COFINS',
-    explicacao: 'O ICMS que sua empresa paga não deveria entrar no cálculo do PIS/COFINS — esse entendimento já está consolidado e pode gerar créditos a recuperar.',
+    explicacao: 'O ICMS destacado na nota não deveria compor a base de cálculo do PIS/COFINS (Tema 69/STF, já pacificado). Aplica-se a empresas do Lucro Presumido e do Lucro Real.',
     segments: ['industria', 'comercio'],
+    regimes: ['presumido', 'real'],
     min: 0.008, max: 0.02,
   },
   {
     id: 'iss-pis-cofins',
     label: 'Exclusão do ISS da base de PIS/COFINS',
-    explicacao: 'Assim como o ICMS, o ISS pago por empresas de serviços também pode ser excluído da base de PIS/COFINS.',
+    explicacao: 'Mesmo raciocínio do ICMS, aplicado ao ISS: o imposto municipal destacado não deveria integrar a base de PIS/COFINS de empresas de serviço no Presumido ou Real.',
     segments: ['servicos', 'construcao'],
+    regimes: ['presumido', 'real'],
     min: 0.003, max: 0.008,
   },
   {
     id: 'insumos-pis-cofins',
     label: 'Créditos de PIS/COFINS sobre insumos essenciais',
-    explicacao: 'Insumos essenciais usados diretamente na produção podem gerar créditos de PIS/COFINS que muitas empresas não aproveitam.',
+    explicacao: 'No regime não-cumulativo (Lucro Real), insumos essenciais ao processo geram crédito de 9,25%. Estimativa: base de insumos entre 8% e 20% do faturamento, conforme o segmento.',
     segments: ['industria', 'construcao'],
-    min: 0.005, max: 0.015,
+    regimes: ['real'],
+    min: PIS_COFINS_NAO_CUMULATIVO * 0.08, max: PIS_COFINS_NAO_CUMULATIVO * 0.2,
   },
   {
     id: 'energia-pis-cofins',
     label: 'Créditos de PIS/COFINS sobre energia elétrica',
-    explicacao: 'A energia elétrica usada na operação da empresa pode gerar créditos de PIS/COFINS, mesmo fora da produção direta.',
+    explicacao: 'Energia elétrica consumida no estabelecimento gera crédito de 9,25% no regime não-cumulativo, mesmo fora da produção direta. Estimativa: base entre 1% e 4% do faturamento.',
     segments: ['industria', 'comercio', 'servicos', 'construcao'],
-    min: 0.001, max: 0.004,
+    regimes: ['real'],
+    min: PIS_COFINS_NAO_CUMULATIVO * 0.01, max: PIS_COFINS_NAO_CUMULATIVO * 0.04,
   },
   {
     id: 'frete-pis-cofins',
     label: 'Créditos de PIS/COFINS sobre frete (insumo)',
-    explicacao: 'O frete pago para transportar insumos ou mercadorias pode ser considerado insumo e gerar créditos de PIS/COFINS.',
+    explicacao: 'Frete pago para transportar insumos ou mercadorias entre estabelecimentos costuma ser tratado como insumo. Estimativa: base entre 1% e 4% do faturamento.',
     segments: ['industria', 'comercio', 'construcao'],
-    min: 0.001, max: 0.004,
+    regimes: ['real'],
+    min: PIS_COFINS_NAO_CUMULATIVO * 0.01, max: PIS_COFINS_NAO_CUMULATIVO * 0.04,
   },
   {
     id: 'embalagens-pis-cofins',
     label: 'Créditos de PIS/COFINS sobre embalagens',
-    explicacao: 'Embalagens usadas no processo produtivo ou na venda de mercadorias também podem gerar créditos de PIS/COFINS.',
+    explicacao: 'Embalagens usadas no processo produtivo ou na expedição de mercadorias também compõem a base de crédito de 9,25%. Estimativa: base entre 0,5% e 2% do faturamento.',
     segments: ['industria', 'comercio'],
-    min: 0.001, max: 0.003,
+    regimes: ['real'],
+    min: PIS_COFINS_NAO_CUMULATIVO * 0.005, max: PIS_COFINS_NAO_CUMULATIVO * 0.02,
   },
   {
     id: 'icms-st',
     label: 'Recuperação de ICMS-ST pago a maior',
-    explicacao: 'Empresas que compram mercadorias com ICMS pago por substituição tributária costumam pagar a mais — esse valor pode ser recuperado.',
+    explicacao: 'Quando a base presumida da substituição tributária supera o valor da venda efetiva, a diferença de ICMS pode ser restituída (LC 87/96, art. 10, e decisão do STF no Tema 201).',
     segments: ['comercio'],
+    regimes: ['presumido', 'real'],
     min: 0.004, max: 0.012,
   },
   {
     id: 'icms-energia',
     label: 'Créditos de ICMS sobre energia elétrica (indústria)',
-    explicacao: 'Indústrias que usam energia elétrica no processo produtivo podem ter direito a créditos de ICMS sobre esse consumo.',
+    explicacao: 'Indústrias que consomem energia elétrica no processo produtivo têm direito a crédito de ICMS sobre esse consumo — item que costuma passar despercebido na apuração de rotina.',
     segments: ['industria'],
+    regimes: ['presumido', 'real'],
     min: 0.002, max: 0.006,
   },
   {
     id: 'icms-irpj-csll',
     label: 'Exclusão do ICMS da base de IRPJ/CSLL (subvenção)',
-    explicacao: 'Incentivos e benefícios de ICMS concedidos pelo estado podem, em alguns casos, ser excluídos do cálculo do IRPJ e da CSLL.',
+    explicacao: 'Incentivos fiscais de ICMS concedidos por convênio estadual podem ser excluídos da base de IRPJ/CSLL quando registrados como subvenção para investimento, cumpridos os requisitos legais.',
     segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    regimes: ['real'],
     min: 0.003, max: 0.01,
   },
   {
     id: 'ipi-insumos',
     label: 'Créditos de IPI sobre insumos isentos/alíquota zero',
-    explicacao: 'Indústrias que compram insumos isentos ou com alíquota zero de IPI podem ter direito a créditos que não estão sendo aproveitados.',
+    explicacao: 'Estabelecimentos industriais que compram insumos isentos ou com alíquota zero de IPI têm, em determinadas hipóteses, direito ao crédito presumido correspondente.',
     segments: ['industria'],
+    regimes: ['presumido', 'real'],
     min: 0.002, max: 0.006,
   },
   {
     id: 'difal',
     label: 'Restituição de DIFAL pago indevidamente',
-    explicacao: 'Empresas que compram de outros estados podem ter pago DIFAL a mais em algumas operações — esse valor pode ser restituído.',
+    explicacao: 'Compras interestaduais com cálculo incorreto do diferencial de alíquota costumam gerar recolhimento a maior, passível de restituição administrativa.',
     segments: ['comercio', 'industria'],
+    regimes: ['simples', 'presumido', 'real'],
     min: 0.001, max: 0.005,
   },
   {
     id: 'produtos-intermediarios',
     label: 'Créditos sobre produtos intermediários',
-    explicacao: 'Produtos usados no processo de fabricação, mesmo sem virar parte do produto final, também podem gerar créditos.',
+    explicacao: 'Itens consumidos no processo de fabricação sem integrar fisicamente o produto final — mas essenciais a ele — também podem gerar crédito de ICMS e IPI.',
     segments: ['industria'],
+    regimes: ['presumido', 'real'],
     min: 0.002, max: 0.006,
   },
   {
     id: 'segregacao-simples',
     label: 'Segregação de receitas no Simples Nacional',
-    explicacao: 'Empresas do Simples Nacional com mais de uma atividade às vezes pagam imposto a mais por não separar corretamente as receitas de cada uma.',
+    explicacao: 'Empresas do Simples com mais de uma atividade (ex: comércio e serviço) que não segregam corretamente as receitas por anexo costumam pagar alíquota efetiva maior que a devida.',
     segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    regimes: ['simples'],
     min: 0.003, max: 0.012,
   },
   {
     id: 'verbas-inss',
     label: 'Exclusão de verbas indenizatórias da base do INSS patronal',
-    explicacao: 'Algumas verbas pagas aos funcionários não deveriam entrar no cálculo do INSS pago pela empresa, o que pode gerar créditos sobre a folha.',
+    explicacao: 'Verbas de natureza indenizatória (como aviso prévio indenizado e terço constitucional de férias) não deveriam compor a base da contribuição previdenciária patronal.',
     segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    regimes: ['presumido', 'real'],
     min: 0.002, max: 0.008,
   },
   {
     id: 'cnae-iss',
     label: 'Revisão de enquadramento de CNAE/ISS',
-    explicacao: 'Se o enquadramento de atividade usado pelo município estiver incorreto, sua empresa pode estar pagando uma alíquota de ISS maior do que deveria.',
+    explicacao: 'Enquadramento de atividade divergente do praticado pode levar o município a exigir alíquota de ISS acima da devida — comum em empresas com atividade mista.',
     segments: ['servicos', 'construcao'],
+    regimes: ['simples', 'presumido', 'real'],
     min: 0.001, max: 0.005,
   },
   {
     id: 'software-pis-cofins',
     label: 'Créditos de PIS/COFINS sobre softwares e licenças',
-    explicacao: 'Softwares e licenças usados na operação da empresa também podem gerar créditos de PIS/COFINS.',
+    explicacao: 'Licenças de software essenciais à operação, no regime não-cumulativo, podem compor a base de crédito de 9,25% quando caracterizadas como insumo.',
     segments: ['servicos', 'industria', 'comercio'],
-    min: 0.001, max: 0.004,
+    regimes: ['real'],
+    min: PIS_COFINS_NAO_CUMULATIVO * 0.005, max: PIS_COFINS_NAO_CUMULATIVO * 0.02,
   },
   {
     id: 'publicidade-pis-cofins',
     label: 'Créditos de PIS/COFINS sobre propaganda e publicidade',
-    explicacao: 'Gastos com propaganda e publicidade, em certos casos, podem ser considerados insumo e gerar créditos de PIS/COFINS.',
+    explicacao: 'Em segmentos onde publicidade é essencial à atividade-fim, gastos com propaganda podem ser enquadrados como insumo e compor a base de crédito de 9,25%.',
     segments: ['comercio', 'servicos'],
-    min: 0.001, max: 0.003,
+    regimes: ['real'],
+    min: PIS_COFINS_NAO_CUMULATIVO * 0.003, max: PIS_COFINS_NAO_CUMULATIVO * 0.01,
   },
   {
     id: 'perdcomp',
     label: 'Compensação de créditos federais via PER/DCOMP',
-    explicacao: 'Créditos federais que sua empresa já tem direito podem ser usados para compensar outros impostos, em vez de ficar parados.',
+    explicacao: 'Créditos federais já reconhecidos e não utilizados ficam parados na escrita fiscal quando a empresa não formaliza a compensação — o crédito existe, só falta ser operacionalizado.',
     segments: ['industria', 'comercio', 'servicos', 'construcao'],
+    regimes: ['presumido', 'real'],
     min: 0.002, max: 0.007,
   },
   {
     id: 'seguros-pis-cofins',
     label: 'Créditos sobre seguros obrigatórios (insumo)',
-    explicacao: 'Seguros obrigatórios contratados pela empresa também podem ser considerados insumo e gerar créditos de PIS/COFINS.',
+    explicacao: 'Seguros obrigatórios vinculados diretamente à operação podem, a depender do caso, ser tratados como insumo e compor a base de crédito de PIS/COFINS não-cumulativo.',
     segments: ['industria', 'comercio'],
-    min: 0.001, max: 0.003,
+    regimes: ['real'],
+    min: PIS_COFINS_NAO_CUMULATIVO * 0.003, max: PIS_COFINS_NAO_CUMULATIVO * 0.01,
   },
   {
     id: 'ipi-saida',
     label: 'Revisão da base de cálculo do IPI na saída de produtos',
-    explicacao: 'O cálculo do IPI na saída de produtos às vezes é feito de forma equivocada, gerando pagamento a maior que pode ser revisto.',
+    explicacao: 'Erros na composição da base de cálculo do IPI na saída (descontos incondicionais, frete, embalagem) geram recolhimento a maior recorrente, mês após mês.',
     segments: ['industria'],
+    regimes: ['presumido', 'real'],
     min: 0.001, max: 0.004,
   },
 ]
@@ -314,17 +348,32 @@ export default function Simulator() {
     )
   }
 
+  // Só mostramos hipóteses juridicamente aplicáveis ao regime tributário escolhido
+  // (ex.: crédito de PIS/COFINS não-cumulativo não aparece pra quem está no Simples).
+  const teseAplicavelAoRegime = (t) => t.regimes.includes(regime)
+
   const isRecommendedTese = (t) => {
     if (!companySegment) return false
     if (t.id === 'segregacao-simples' && regime !== 'simples') return false
     return t.segments.includes(companySegment)
   }
 
-  const sortedTeses = useMemo(() => {
-    if (!companySegment) return TESES
-    return [...TESES].sort((a, b) => Number(isRecommendedTese(b)) - Number(isRecommendedTese(a)))
+  const visibleTeses = useMemo(
+    () => TESES.filter(teseAplicavelAoRegime),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [companySegment, regime])
+    [regime]
+  )
+
+  const sortedTeses = useMemo(() => {
+    if (!companySegment) return visibleTeses
+    return [...visibleTeses].sort((a, b) => Number(isRecommendedTese(b)) - Number(isRecommendedTese(a)))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companySegment, regime, visibleTeses])
+
+  // Se o regime mudar e alguma hipótese selecionada deixar de ser aplicável, remove ela.
+  useEffect(() => {
+    setSelectedTeses((prev) => prev.filter((id) => TESES.find((t) => t.id === id)?.regimes.includes(regime)))
+  }, [regime])
 
   const { low, high, low5, high5, faturamentoAnual } = useMemo(() => {
     const anual = faturamento * 12
@@ -354,7 +403,7 @@ export default function Simulator() {
       `E-mail: ${email}`,
       `Regime: ${REGIMES[regime].label}`,
       `Faturamento médio mensal: ${formatBRL(faturamento)}`,
-      `Teses selecionadas: ${teseLabels || '-'}`,
+      `Hipóteses selecionadas: ${teseLabels || '-'}`,
       `Faixa estimada (1 ano): ${formatBRL(low)} – ${formatBRL(high)}`,
       `Faixa estimada (5 anos retroativos): ${formatBRL(low5)} – ${formatBRL(high5)}`,
       `Tenho SPED/EFDs dos últimos 5 anos: ${hasDocs ? 'Sim' : 'Não'}`,
@@ -689,6 +738,9 @@ export default function Simulator() {
             {companySegment
               ? 'Com base no perfil identificado, destacamos primeiro as hipóteses mais prováveis — mas você pode marcar quantas quiser:'
               : 'Selecione as hipóteses que podem se aplicar à sua empresa:'}
+          </p>
+          <p className="mt-1 text-xs text-ice/40">
+            Mostrando só as hipóteses juridicamente aplicáveis ao regime {REGIMES[regime].label}.
           </p>
           <div className="mt-3 max-h-72 space-y-2 overflow-y-auto pr-1">
             {sortedTeses.map((t) => (
