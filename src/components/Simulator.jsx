@@ -25,6 +25,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.008, max: 0.02,
     certeza: 'consolidado',
+    condicao: 'Escriturável desde já, a partir da revisão da apuração dos períodos não prescritos.',
   },
   {
     id: 'iss-pis-cofins',
@@ -34,6 +35,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.003, max: 0.008,
     certeza: 'defensavel',
+    condicao: 'Requer levantamento dos valores de ISS destacados nas notas dos períodos não prescritos.',
   },
   {
     id: 'insumos-pis-cofins',
@@ -43,6 +45,7 @@ const TESES = [
     regimes: ['real'],
     min: PIS_COFINS_NAO_CUMULATIVO * 0.08, max: PIS_COFINS_NAO_CUMULATIVO * 0.2,
     certeza: 'defensavel',
+    condicao: 'Exige mapear os itens que se enquadram no conceito de insumo (critério de essencialidade e relevância).',
   },
   {
     id: 'energia-pis-cofins',
@@ -52,6 +55,7 @@ const TESES = [
     regimes: ['real'],
     min: PIS_COFINS_NAO_CUMULATIVO * 0.01, max: PIS_COFINS_NAO_CUMULATIVO * 0.04,
     certeza: 'consolidado',
+    condicao: 'Basta o levantamento do consumo de energia elétrica nas notas fiscais do período.',
   },
   {
     id: 'frete-pis-cofins',
@@ -61,6 +65,7 @@ const TESES = [
     regimes: ['real'],
     min: PIS_COFINS_NAO_CUMULATIVO * 0.01, max: PIS_COFINS_NAO_CUMULATIVO * 0.04,
     certeza: 'defensavel',
+    condicao: 'Requer identificar os fretes vinculados a insumos ou mercadorias, separando-os dos não elegíveis.',
   },
   {
     id: 'embalagens-pis-cofins',
@@ -70,6 +75,7 @@ const TESES = [
     regimes: ['real'],
     min: PIS_COFINS_NAO_CUMULATIVO * 0.005, max: PIS_COFINS_NAO_CUMULATIVO * 0.02,
     certeza: 'defensavel',
+    condicao: 'Exige separar as embalagens de uso no processo produtivo das de uso administrativo.',
   },
   {
     id: 'icms-st',
@@ -79,6 +85,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.004, max: 0.012,
     certeza: 'consolidado',
+    condicao: 'Requer levantamento das vendas efetivas por período para apurar a diferença entre base presumida e base real.',
   },
   {
     id: 'icms-energia',
@@ -88,6 +95,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.002, max: 0.006,
     certeza: 'defensavel',
+    condicao: 'Depende de laudo técnico ou memória de cálculo do consumo de energia na produção.',
   },
   {
     id: 'icms-irpj-csll',
@@ -97,6 +105,7 @@ const TESES = [
     regimes: ['real'],
     min: 0.003, max: 0.01,
     certeza: 'validacao',
+    condicao: 'Depende do registro da subvenção em reserva de incentivos fiscais e do cumprimento dos requisitos da LC 160/2017.',
   },
   {
     id: 'ipi-insumos',
@@ -106,6 +115,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.002, max: 0.006,
     certeza: 'validacao',
+    condicao: 'Requer identificação, nota a nota, dos insumos isentos ou com alíquota zero utilizados na produção.',
   },
   {
     id: 'difal',
@@ -115,6 +125,7 @@ const TESES = [
     regimes: ['simples', 'presumido', 'real'],
     min: 0.001, max: 0.005,
     certeza: 'defensavel',
+    condicao: 'Requer conferência do cálculo do diferencial de alíquota em cada operação interestadual do período.',
   },
   {
     id: 'produtos-intermediarios',
@@ -124,6 +135,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.002, max: 0.006,
     certeza: 'validacao',
+    condicao: 'Depende de leitura ampla da escrituração para separar itens tratados, por erro, como uso e consumo.',
   },
   {
     id: 'segregacao-simples',
@@ -133,6 +145,7 @@ const TESES = [
     regimes: ['simples'],
     min: 0.003, max: 0.012,
     certeza: 'defensavel',
+    condicao: 'Exige reclassificação das receitas por anexo do Simples Nacional, com apuração retroativa.',
   },
   {
     id: 'verbas-inss',
@@ -142,6 +155,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.002, max: 0.008,
     certeza: 'defensavel',
+    condicao: 'Requer identificação das verbas de natureza indenizatória na folha de pagamento do período.',
   },
   {
     id: 'cnae-iss',
@@ -151,6 +165,7 @@ const TESES = [
     regimes: ['simples', 'presumido', 'real'],
     min: 0.001, max: 0.005,
     certeza: 'validacao',
+    condicao: 'Depende de análise do enquadramento de atividade praticado frente ao CNAE cadastrado.',
   },
   {
     id: 'software-pis-cofins',
@@ -160,6 +175,7 @@ const TESES = [
     regimes: ['real'],
     min: PIS_COFINS_NAO_CUMULATIVO * 0.005, max: PIS_COFINS_NAO_CUMULATIVO * 0.02,
     certeza: 'validacao',
+    condicao: 'Exige demonstrar a essencialidade da licença de software para a atividade-fim.',
   },
   {
     id: 'publicidade-pis-cofins',
@@ -169,6 +185,7 @@ const TESES = [
     regimes: ['real'],
     min: PIS_COFINS_NAO_CUMULATIVO * 0.003, max: PIS_COFINS_NAO_CUMULATIVO * 0.01,
     certeza: 'validacao',
+    condicao: 'Exige demonstrar a essencialidade do gasto com publicidade para a atividade-fim.',
   },
   {
     id: 'perdcomp',
@@ -178,6 +195,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.002, max: 0.007,
     certeza: 'consolidado',
+    condicao: 'Basta formalizar a compensação de créditos já reconhecidos e ainda não utilizados.',
   },
   {
     id: 'seguros-pis-cofins',
@@ -187,6 +205,7 @@ const TESES = [
     regimes: ['real'],
     min: PIS_COFINS_NAO_CUMULATIVO * 0.003, max: PIS_COFINS_NAO_CUMULATIVO * 0.01,
     certeza: 'validacao',
+    condicao: 'Exige demonstrar o vínculo direto do seguro com a operação.',
   },
   {
     id: 'ipi-saida',
@@ -196,6 +215,7 @@ const TESES = [
     regimes: ['presumido', 'real'],
     min: 0.001, max: 0.004,
     certeza: 'defensavel',
+    condicao: 'Requer revisão da composição da base de cálculo do IPI, nota a nota.',
   },
 ]
 
@@ -222,16 +242,12 @@ const CERTEZA_CONFIG = {
 
 const CERTEZA_ORDER = ['consolidado', 'defensavel', 'validacao']
 
-// Exemplo fixo, meramente ilustrativo — não corresponde a nenhum cliente real.
-const EXEMPLO_ILUSTRATIVO = {
-  empresa: 'Metalúrgica Exemplo Ltda. (fictícia)',
-  regime: 'Lucro Real',
-  total: 1224000,
-  tiers: {
-    consolidado: { min: 612000, max: 612000, itens: ['Exclusão do ICMS da base de PIS/COFINS'] },
-    defensavel: { min: 398000, max: 398000, itens: ['Créditos de PIS/COFINS sobre insumos e energia'] },
-    validacao: { min: 214000, max: 214000, itens: ['ICMS sobre produtos intermediários'] },
-  },
+const ROMAN_NUMERALS = [
+  '', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
+  'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX',
+]
+function toRoman(n) {
+  return ROMAN_NUMERALS[n] || String(n)
 }
 
 const WHATSAPP_NUMBER = '5541995206026'
@@ -423,20 +439,18 @@ export default function Simulator() {
     }
   }, [faturamento, selectedTeses])
 
-  // Decompõe o resultado por grau de certeza, usando as hipóteses reais selecionadas.
-  const breakdownPorCerteza = useMemo(() => {
-    const base = {
-      consolidado: { min: 0, max: 0, itens: [] },
-      defensavel: { min: 0, max: 0, itens: [] },
-      validacao: { min: 0, max: 0, itens: [] },
-    }
-    TESES.filter((t) => selectedTeses.includes(t.id)).forEach((t) => {
-      const tier = base[t.certeza]
-      tier.min += faturamentoAnual * t.min
-      tier.max += faturamentoAnual * t.max
-      tier.itens.push(t.label)
-    })
-    return base
+  // Lista as hipóteses reais selecionadas, ordenadas por grau de certeza,
+  // cada uma com seu valor, fundamento e condição para virar caixa.
+  const itensDoDiagnostico = useMemo(() => {
+    const selecionadas = TESES.filter((t) => selectedTeses.includes(t.id))
+    const ordenadas = [...selecionadas].sort(
+      (a, b) => CERTEZA_ORDER.indexOf(a.certeza) - CERTEZA_ORDER.indexOf(b.certeza)
+    )
+    return ordenadas.map((t) => ({
+      ...t,
+      valorMin: faturamentoAnual * t.min,
+      valorMax: faturamentoAnual * t.max,
+    }))
   }, [selectedTeses, faturamentoAnual])
 
   const buildWhatsappLink = () => {
@@ -910,69 +924,52 @@ export default function Simulator() {
             </p>
           </div>
 
-          {/* Metodologia: como chegamos nesse número */}
+          {/* Metodologia aplicada ao caso real da empresa que simulou */}
           <div className="mt-8 border-t border-line pt-6">
             <p className="section-label mb-1">Como chegamos nesse número</p>
-            <h3 className="font-display text-lg">Não é uma lista de créditos. É uma leitura por grau de certeza.</h3>
+            <h3 className="font-display text-lg">
+              {nome || 'Sua empresa'} — {REGIMES[regime].label}
+            </h3>
+            <p className="mt-1 font-mono text-base font-semibold text-ice/80">
+              {formatBRL(low)} – {formatBRL(high)} identificados em {itensDoDiagnostico.length}{' '}
+              {itensDoDiagnostico.length === 1 ? 'frente' : 'frentes'}, com graus de certeza diferentes.
+            </p>
             <p className="mt-2 text-sm leading-relaxed text-ice/60">
-              Antes de qualquer valor virar promessa, cada hipótese é classificada:
-              o que já está consolidado em lei ou jurisprudência, o que é defensável
-              mas ainda depende de interpretação, e o que precisa de prova documental
-              específica da sua operação.
+              Não é uma lista de créditos. É a leitura honesta do que é consolidado,
+              do que é defensável e do que ainda precisa de prova — antes de
+              qualquer número virar promessa.
             </p>
 
-            {/* Exemplo fictício fixo, para contexto */}
-            <div className="mt-5 rounded-xl border border-line bg-white/[0.02] p-4">
-              <p className="text-[11px] uppercase tracking-wide text-ice/35">
-                Exemplo ilustrativo — {EXEMPLO_ILUSTRATIVO.empresa}, {EXEMPLO_ILUSTRATIVO.regime}. Caso fictício, não corresponde a nenhum cliente real.
-              </p>
-              <p className="mt-2 font-mono text-lg font-semibold text-ice/80">
-                {formatBRL(EXEMPLO_ILUSTRATIVO.total)} identificados em três frentes
-              </p>
-              <div className="mt-3 space-y-2">
-                {CERTEZA_ORDER.map((key) => {
-                  const tier = EXEMPLO_ILUSTRATIVO.tiers[key]
-                  if (!tier) return null
-                  const cfg = CERTEZA_CONFIG[key]
-                  return (
-                    <div key={key} className="flex items-center justify-between gap-3 text-xs">
-                      <span className={`rounded-full border px-2 py-0.5 font-semibold ${cfg.badge}`}>
+            <div className="mt-5 space-y-3">
+              {itensDoDiagnostico.map((item, i) => {
+                const cfg = CERTEZA_CONFIG[item.certeza]
+                return (
+                  <div key={item.id} className="rounded-lg border border-line bg-white/[0.02] p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-medium text-ice/85">
+                        <span className="mr-2 font-mono text-blue-light/70">{toRoman(i + 1)}</span>
+                        {item.label}
+                      </p>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${cfg.badge}`}>
                         {cfg.label}
                       </span>
-                      <span className="flex-1 truncate text-ice/50">{tier.itens.join(', ')}</span>
-                      <span className="font-mono text-ice/70">{formatBRL(tier.min)}</span>
+                      <span className="font-mono text-sm text-ice/80">
+                        {formatBRL(item.valorMin)} – {formatBRL(item.valorMax)}
+                      </span>
                     </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Decomposição real, com os dados da simulação */}
-            <div className="mt-5 rounded-xl border border-blue/25 bg-blue/[0.05] p-4">
-              <p className="text-[11px] uppercase tracking-wide text-blue-light/70">
-                No seu caso — {nome || 'sua empresa'}
-              </p>
-              <div className="mt-3 space-y-3">
-                {CERTEZA_ORDER.map((key) => {
-                  const tier = breakdownPorCerteza[key]
-                  if (!tier || tier.itens.length === 0) return null
-                  const cfg = CERTEZA_CONFIG[key]
-                  return (
-                    <div key={key} className="rounded-lg border border-line bg-graphite p-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${cfg.badge}`}>
-                          {cfg.label}
-                        </span>
-                        <span className="font-mono text-sm text-ice/80">
-                          {formatBRL(tier.min)} – {formatBRL(tier.max)}
-                        </span>
-                      </div>
-                      <p className="mt-1.5 text-[11px] text-ice/45">{cfg.desc}</p>
-                      <p className="mt-1 text-[11px] text-ice/55">{tier.itens.join(' · ')}</p>
-                    </div>
-                  )
-                })}
-              </div>
+                    <p className="mt-2 text-xs leading-relaxed text-ice/50">
+                      <span className="font-medium text-ice/60">Fundamento: </span>
+                      {item.explicacao}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-ice/50">
+                      <span className="font-medium text-ice/60">Condição para virar caixa: </span>
+                      {item.condicao}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           </div>
 
