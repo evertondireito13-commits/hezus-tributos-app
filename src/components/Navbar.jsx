@@ -3,6 +3,7 @@ import { useState } from 'react'
 const LINKS = [
   { href: '#quem-somos', label: 'Quem somos' },
   { href: '#metodo', label: 'Método' },
+  { href: '#metodologia', label: 'Metodologia' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#atuacao', label: 'Atuação' },
   { href: '#tecnologia', label: 'Tecnologia' },
@@ -24,10 +25,9 @@ export default function Navbar() {
         <a href="#top" className="flex items-center" onClick={handleLinkClick}>
           <img src="/hezus-logo.png" alt="Hezus Capital & Tributos" className="h-8 w-auto sm:h-10" />
         </a>
-
         <div className="hidden gap-8 md:flex">
           {LINKS.map((l) => (
-            <a
+            
               key={l.href}
               href={l.href}
               className="text-sm text-ice/70 transition hover:text-ice"
@@ -36,14 +36,12 @@ export default function Navbar() {
             </a>
           ))}
         </div>
-
-        <a
+        
           href="#lead"
           className="hidden rounded-full bg-blue px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 md:inline-block"
         >
           Diagnóstico gratuito
         </a>
-
         {/* Botão hamburguer — só aparece em telas pequenas */}
         <button
           type="button"
@@ -71,7 +69,6 @@ export default function Navbar() {
           </span>
         </button>
       </nav>
-
       {/* Menu mobile */}
       <div
         className={`overflow-hidden border-b border-line bg-graphite transition-[max-height] duration-300 md:hidden ${
@@ -80,7 +77,7 @@ export default function Navbar() {
       >
         <div className="flex flex-col gap-1 px-5 py-3">
           {LINKS.map((l) => (
-            <a
+            
               key={l.href}
               href={l.href}
               onClick={handleLinkClick}
@@ -89,7 +86,7 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <a
+          
             href="#lead"
             onClick={handleLinkClick}
             className="mt-2 rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110"
