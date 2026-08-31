@@ -987,8 +987,7 @@ export default function Simulator({ onStepChange } = {}) {
               WhatsApp ou e-mail — sem precisar refazer a simulação.
             </p>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-              <a href={diagnosticoUrl} target="_blank" rel="noopener noreferrer" className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto">Ver diagnóstico completo</a>
-              <button
+              <a href={diagnosticoUrl} target="_blank" rel="noopener noreferrer" className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto">Ver diagnóstico completo</a>              <button
                 type="button"
                 onClick={handleCopiarLink}
                 className="w-full rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ice/70 transition hover:border-ice/40 sm:w-auto"
