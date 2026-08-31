@@ -88,11 +88,19 @@ export default function Diagnostico() {
   }
 
   return (
-    <div className="min-h-screen text-ice">
+    <div className="min-h-screen bg-graphite text-ice">
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          body { background: white !important; color: black !important; }
+          html, body, #root {
+            background: inherit;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          @page { margin: 12mm; }
         }
       `}</style>
 
