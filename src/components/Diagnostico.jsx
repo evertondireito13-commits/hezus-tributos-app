@@ -42,10 +42,9 @@ export default function Diagnostico() {
         <p className="section-label">Link inválido</p>
         <h1 className="mt-3 font-display text-2xl">Não conseguimos carregar esse diagnóstico</h1>
         <p className="mt-3 text-sm text-ice/60">
-          O link pode estar incompleto ou corrompido. Gere um novo diagnóstico pelo simulador na
-          página inicial.
+          O link pode estar incompleto ou corrompido. Gere um novo diagnóstico pelo simulador na página inicial.
         </p>
-        
+        <a
           href="/"
           className="mt-6 rounded-full bg-blue px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
         >
@@ -58,7 +57,9 @@ export default function Diagnostico() {
   const totalGeral = Object.values(totalPorCerteza).reduce((a, b) => a + b, 0)
 
   const dataGeracaoFormatada = new Date(data.geradoEm).toLocaleDateString('pt-BR', {
-    day: '2-digit', month: 'long', year: 'numeric',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
   })
 
   const whatsappMessage = [
@@ -128,12 +129,11 @@ export default function Diagnostico() {
         <section className="mt-12 border-t border-line pt-8">
           <p className="section-label">Cada número com o seu grau de certeza</p>
           <h2 className="mt-2 font-display text-xl">
-            {itensOrdenados.length}{' '}
-            {itensOrdenados.length === 1 ? 'frente identificada' : 'frentes identificadas'}
+            {itensOrdenados.length} {itensOrdenados.length === 1 ? 'frente identificada' : 'frentes identificadas'}
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-ice/60">
-            Não é uma lista de créditos. É a leitura honesta do que é consolidado, do que é
-            defensável e do que ainda precisa de prova — antes de qualquer número virar promessa.
+            Não é uma lista de créditos. É a leitura honesta do que é consolidado, do que é defensável e do que
+            ainda precisa de prova — antes de qualquer número virar promessa.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -154,10 +154,12 @@ export default function Diagnostico() {
                     </span>
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-ice/50">
-                    <span className="font-medium text-ice/60">Fundamento: </span>{item.explicacao}
+                    <span className="font-medium text-ice/60">Fundamento: </span>
+                    {item.explicacao}
                   </p>
                   <p className="mt-1 text-xs leading-relaxed text-ice/50">
-                    <span className="font-medium text-ice/60">Condição para virar caixa: </span>{item.condicao}
+                    <span className="font-medium text-ice/60">Condição para virar caixa: </span>
+                    {item.condicao}
                   </p>
                 </div>
               )
@@ -166,20 +168,18 @@ export default function Diagnostico() {
         </section>
 
         <p className="mt-8 text-xs text-ice/50">
-          Estimativa preliminar e ilustrativa, sujeita a diagnóstico técnico detalhado. Não
-          constitui garantia de valor ou de resultado.
+          Estimativa preliminar e ilustrativa, sujeita a diagnóstico técnico detalhado. Não constitui garantia de
+          valor ou de resultado.
         </p>
 
         <section className="mt-12 rounded-2xl border border-line bg-white/[0.03] p-6 text-center sm:p-10">
           <p className="section-label">Próximo passo</p>
-          <h2 className="mt-2 font-display text-xl sm:text-2xl">
-            Vamos transformar diagnóstico em caixa.
-          </h2>
+          <h2 className="mt-2 font-display text-xl sm:text-2xl">Vamos transformar diagnóstico em caixa.</h2>
           <p className="mx-auto mt-3 max-w-md text-sm text-ice/60">
-            As frentes estão mapeadas e cada uma tem a sua condição definida. Fale com a gente
-            para avançar para a fase de prova e recuperação.
+            As frentes estão mapeadas e cada uma tem a sua condição definida. Fale com a gente para avançar para a
+            fase de prova e recuperação.
           </p>
-          
+          <a
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
