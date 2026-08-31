@@ -9,7 +9,6 @@ import Metodologia from './components/Metodologia.jsx'
 import Atuacao from './components/Atuacao.jsx'
 import Services from './components/Services.jsx'
 import HowItWorks from './components/HowItWorks.jsx'
-import ClientPanel from './components/ClientPanel.jsx'
 import Tecnologia from './components/Tecnologia.jsx'
 import Testimonials from './components/Testimonials.jsx'
 import FAQ from './components/FAQ.jsx'
@@ -17,8 +16,14 @@ import Contato from './components/Contato.jsx'
 import LeadForm from './components/LeadForm.jsx'
 import Footer from './components/Footer.jsx'
 import WhatsAppButton from './components/WhatsAppButton.jsx'
+import Diagnostico from './components/Diagnostico.jsx'
 
 export default function App() {
+  const params = new URLSearchParams(window.location.search)
+  if (params.has('diagnostico')) {
+    return <Diagnostico />
+  }
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -33,7 +38,6 @@ export default function App() {
         <Services />
         <Atuacao />
         <HowItWorks />
-        <ClientPanel />
         <Tecnologia />
         <Testimonials />
         <FAQ />
