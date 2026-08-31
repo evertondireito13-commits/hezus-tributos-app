@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-
-const REGIMES = {
-  simples: { label: 'Simples Nacional' },
-  presumido: { label: 'Lucro Presumido' },
-  real: { label: 'Lucro Real' },
-}
+import {
+  REGIMES,
+  CERTEZA_CONFIG,
+  CERTEZA_ORDER,
+  WHATSAPP_NUMBER,
+  toRoman,
+  formatBRL,
+  buildDiagnosticoUrl,
+} from '../utils/diagnosticoShared'
 
 const SEGMENTOS = {
   industria: { label: 'Indústria' },
@@ -219,46 +222,9 @@ const TESES = [
   },
 ]
 
-const CERTEZA_CONFIG = {
-  consolidado: {
-    label: 'Consolidado',
-    desc: 'Amparado em entendimento pacificado (STF/STJ) ou em norma expressa. Risco marginal de contestação.',
-    badge: 'border-blue/40 bg-blue/10 text-blue',
-    bar: 'bg-blue',
-  },
-  defensavel: {
-    label: 'Defensável',
-    desc: 'Amparado em jurisprudência favorável e boa base documental, mas ainda sujeito a interpretação.',
-    badge: 'border-gold/40 bg-gold/10 text-gold',
-    bar: 'bg-gold',
-  },
-  validacao: {
-    label: 'Sujeito a validação',
-    desc: 'Depende de comprovação documental específica da sua operação antes de virar número final.',
-    badge: 'border-line bg-white/[0.04] text-ice/60',
-    bar: 'bg-ice/30',
-  },
-}
-
-const CERTEZA_ORDER = ['consolidado', 'defensavel', 'validacao']
-
-const ROMAN_NUMERALS = [
-  '', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
-  'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX',
-]
-function toRoman(n) {
-  return ROMAN_NUMERALS[n] || String(n)
-}
-
-const WHATSAPP_NUMBER = '5541995206026'
-
 const EMAILJS_SERVICE_ID = 'service_8wpx9uq'
 const EMAILJS_TEMPLATE_ID = 'template_glqg928'
 const EMAILJS_PUBLIC_KEY = 'Sr1K9lFnEDRGBozQN'
-
-function formatBRL(value) {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
-}
 
 function formatCNPJ(raw) {
   const digits = raw.replace(/\D/g, '').slice(0, 14)
@@ -333,6 +299,7 @@ export default function Simulator({ onStepChange } = {}) {
   const [hasDocs, setHasDocs] = useState(false)
   const [errors, setErrors] = useState({})
   const [emailStatus, setEmailStatus] = useState(null)
+  const [linkCopiado, setLinkCopiado] = useState(false)
 
   const [nomeAuto, setNomeAuto] = useState(false)
   const [nomeLoading, setNomeLoading] = useState(false)
@@ -458,6 +425,31 @@ export default function Simulator({ onStepChange } = {}) {
     }))
   }, [selectedTeses, faturamentoAnual])
 
+  // Pacote de dados que vira o link único do diagnóstico completo (/?diagnostico=...)
+  const diagnosticoUrl = useMemo(() => {
+    const dados = {
+      nome,
+      cnpj,
+      regimeLabel: REGIMES[regime].label,
+      faturamentoAnual,
+      low,
+      high,
+      low5,
+      high5,
+      geradoEm: new Date().toISOString(),
+      itens: itensDoDiagnostico.map((item) => ({
+        label: item.label,
+        explicacao: item.explicacao,
+        condicao: item.condicao,
+        certeza: item.certeza,
+        valorMin: item.valorMin,
+        valorMax: item.valorMax,
+      })),
+    }
+    return buildDiagnosticoUrl(dados)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nome, cnpj, regime, faturamentoAnual, low, high, low5, high5, itensDoDiagnostico])
+
   const buildWhatsappLink = () => {
     const teseLabels = TESES.filter((t) => selectedTeses.includes(t.id))
       .map((t) => t.label)
@@ -474,8 +466,19 @@ export default function Simulator({ onStepChange } = {}) {
       `Faixa estimada (1 ano): ${formatBRL(low)} – ${formatBRL(high)}`,
       `Faixa estimada (5 anos retroativos): ${formatBRL(low5)} – ${formatBRL(high5)}`,
       `Tenho SPED/EFDs dos últimos 5 anos: ${hasDocs ? 'Sim' : 'Não'}`,
+      `Diagnóstico completo: ${diagnosticoUrl}`,
     ].join('\n')
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
+  }
+
+  const handleCopiarLink = async () => {
+    try {
+      await navigator.clipboard.writeText(diagnosticoUrl)
+      setLinkCopiado(true)
+      setTimeout(() => setLinkCopiado(false), 2000)
+    } catch {
+      setLinkCopiado(false)
+    }
   }
 
   const sendLeadEmail = async () => {
@@ -503,6 +506,7 @@ export default function Simulator({ onStepChange } = {}) {
             faixa_1_ano: `${formatBRL(low)} – ${formatBRL(high)}`,
             faixa_5_anos: `${formatBRL(low5)} – ${formatBRL(high5)}`,
             tem_sped: hasDocs ? 'Sim' : 'Não',
+            link_diagnostico: diagnosticoUrl,
           },
         }),
       })
@@ -977,6 +981,32 @@ export default function Simulator({ onStepChange } = {}) {
                   </div>
                 )
               })}
+            </div>
+          </div>
+
+          {/* Link único do diagnóstico completo, no formato de relatório */}
+          <div className="mt-6 rounded-lg border border-line bg-white/[0.02] p-4">
+            <p className="text-xs uppercase tracking-wide text-ice/50">Diagnóstico completo</p>
+            <p className="mt-1 text-sm text-ice/60">
+              Gere um link único com esse diagnóstico completo, pronto pra enviar por
+              WhatsApp ou e-mail — sem precisar refazer a simulação.
+            </p>
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <a
+                href={diagnosticoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
+              >
+                Ver diagnóstico completo
+              </a>
+              <button
+                type="button"
+                onClick={handleCopiarLink}
+                className="w-full rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ice/70 transition hover:border-ice/40 sm:w-auto"
+              >
+                {linkCopiado ? 'Link copiado!' : 'Copiar link'}
+              </button>
             </div>
           </div>
 
