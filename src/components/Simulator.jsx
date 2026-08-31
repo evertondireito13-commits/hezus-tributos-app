@@ -463,7 +463,6 @@ export default function Simulator({ onStepChange } = {}) {
       `Faixa estimada (1 ano): ${formatBRL(low)} – ${formatBRL(high)}`,
       `Faixa estimada (5 anos retroativos): ${formatBRL(low5)} – ${formatBRL(high5)}`,
       `Tenho SPED/EFDs dos últimos 5 anos: ${hasDocs ? 'Sim' : 'Não'}`,
-      `Diagnóstico completo: ${diagnosticoUrl}`,
     ].join('\n')
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
   }
