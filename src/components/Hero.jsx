@@ -17,7 +17,7 @@ export default function Hero() {
       >
         <div className={`reveal-init ${isWideStep ? 'lg:hidden' : ''}`}>
           <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-4 py-1.5 text-xs text-ice/60">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue" />
+            <span className="pulse-live h-1.5 w-1.5 rounded-full bg-blue" />
             Inteligência tributária, financeira e estratégica
           </span>
           <h1 className="mt-6 font-display text-3xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl lg:text-[3.3rem]">
