@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: 'Como vocês garantem que vão encontrar oportunidades na minha empresa?',
-    a: 'Não garantimos resultado — isso ninguém pode prometer com seriedade. O que temos é histórico: em 96% das empresas que já analisamos, encontramos oportunidade, mesmo em casos que já haviam passado por revisões anteriores. Nossos sócios somam mais de 5 anos de experiência combinada em consultoria tributária e licitações, e a legislação evolui constantemente, criando novas possibilidades.',
+    a: 'Não garantimos resultado — isso ninguém pode prometer com seriedade. O que temos é histórico: em 96% das empresas que já analisamos, encontramos oportunidade, mesmo em casos que já haviam passado por revisões anteriores. Já atendemos mais de 87 empresas em 3 anos de atuação, e nossos sócios somam mais de 10 anos de experiência combinada em consultoria tributária, contábil e licitações públicas.',
   },
   {
     q: 'Por que escolher a Hezus em vez de outras consultorias?',
@@ -39,7 +39,6 @@ const faqs = [
 export default function FAQ() {
   const ref = useReveal()
   const [open, setOpen] = useState(0)
-
   return (
     <section id="faq" className="border-t border-line py-16 sm:py-24">
       <div className="mx-auto max-w-3xl px-5 sm:px-6">
