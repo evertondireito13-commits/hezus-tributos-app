@@ -24,7 +24,6 @@ export default function App() {
   if (params.has('diagnostico')) {
     return <Diagnostico />
   }
-
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -36,6 +35,7 @@ export default function App() {
         <Method />
         <MethodDeep />
         <Metodologia />
+        <PainelCliente />
         <Services />
         <Atuacao />
         <HowItWorks />
