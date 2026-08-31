@@ -904,82 +904,49 @@ export default function Simulator({ onStepChange } = {}) {
 
       {step === 5 && (
         <div className="mt-6">
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-gold/30 bg-gold/10 p-5">
               <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada em 1 ano</p>
               <p className="mt-1 font-mono text-2xl font-semibold text-gold">
                 {formatBRL(low)} – {formatBRL(high)}
               </p>
-              <p className="mt-1 text-xs text-ice/50">
-                Com base em faturamento anual de {formatBRL(faturamentoAnual)} e {selectedTeses.length}{' '}
-                hipótese(s) selecionada(s).
-              </p>
             </div>
 
             <div className="rounded-xl border border-blue/40 bg-blue/10 p-5">
               <p className="text-xs uppercase tracking-wide text-ice/50">
-                Potencial acumulado em 5 anos retroativos
+                Potencial em 5 anos retroativos
               </p>
               <p className="mt-1 font-mono text-2xl font-semibold text-blue">
                 {formatBRL(low5)} – {formatBRL(high5)}
               </p>
-              <p className="mt-1 text-xs text-ice/50">
-                Por lei, é possível pleitear a recuperação de créditos tributários dos
-                últimos 5 anos. Este valor projeta a faixa anual para o período completo,
-                assumindo faturamento estável — o valor real pode variar conforme o
-                histórico de faturamento da empresa.
-              </p>
             </div>
           </div>
 
-          {/* Resumo compacto — o detalhamento item a item (Fundamento, Condição,
-              composição por grau de certeza) mora só no link do diagnóstico completo. */}
-          <div className="mt-8 border-t border-line pt-6">
-            <p className="section-label mb-1">Como chegamos nesse número</p>
-            <h3 className="font-display text-lg">
-              {nome || 'Sua empresa'} — {REGIMES[regime].label}
-            </h3>
-            <p className="mt-1 font-mono text-base font-semibold text-ice/80">
-              {formatBRL(low)} – {formatBRL(high)} identificados em {itensDoDiagnostico.length}{' '}
-              {itensDoDiagnostico.length === 1 ? 'frente' : 'frentes'}, com graus de certeza diferentes.
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-ice/60">
-              Não é uma lista de créditos. É a leitura honesta do que é consolidado,
-              do que é defensável e do que ainda precisa de prova — antes de
-              qualquer número virar promessa.
-            </p>
+          <p className="mt-4 text-sm leading-relaxed text-ice/60">
+            Identificamos {itensDoDiagnostico.length}{' '}
+            {itensDoDiagnostico.length === 1 ? 'frente' : 'frentes'} de recuperação, com graus de
+            certeza diferentes — veja o detalhamento completo de cada uma no relatório abaixo.
+          </p>
 
-            <div className="mt-4 flex flex-wrap gap-2">
-              {CERTEZA_ORDER.map((key) => {
-                const count = itensDoDiagnostico.filter((item) => item.certeza === key).length
-                if (count === 0) return null
-                const cfg = CERTEZA_CONFIG[key]
-                return (
-                  <span
-                    key={key}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${cfg.badge}`}
-                  >
-                    {count} {count === 1 ? 'frente' : 'frentes'} · {cfg.label}
-                  </span>
-                )
-              })}
-            </div>
-          </div>
-
-          <div className="mt-6 rounded-lg border border-blue/30 bg-blue/[0.05] p-4">
-            <p className="text-xs uppercase tracking-wide text-blue-light/70">Diagnóstico completo</p>
-            <p className="mt-1 text-sm text-ice/60">
-              Veja cada frente detalhada — Fundamento, condição para virar caixa e a
-              composição visual por grau de certeza — num link único, pronto pra
-              enviar por WhatsApp, e-mail ou compartilhar com seu contador/sócio.
-              Sem precisar refazer a simulação.
+          <div className="mt-6 rounded-2xl border border-blue/30 bg-blue/[0.06] p-6">
+            <p className="text-xs uppercase tracking-wide text-ice/50">Relatório completo</p>
+            <p className="mt-1 text-sm text-ice/70">
+              Fundamento, condição para virar caixa e valor de cada frente, num relatório pronto
+              pra enviar — pra você, seu sócio ou seu contador conferirem com calma.
             </p>
-            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-              <a href={diagnosticoUrl} target="_blank" rel="noopener noreferrer" className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto">Ver diagnóstico completo</a>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <a
+                href={diagnosticoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full rounded-full bg-blue px-5 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
+              >
+                Ver relatório completo
+              </a>
               <button
                 type="button"
                 onClick={handleCopiarLink}
-                className="w-full rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ice/70 transition hover:border-ice/40 sm:w-auto"
+                className="w-full rounded-full border border-line px-5 py-3 text-sm font-semibold text-ice/70 transition hover:border-ice/40 sm:w-auto"
               >
                 {linkCopiado ? 'Link copiado!' : 'Copiar link'}
               </button>
@@ -998,7 +965,14 @@ export default function Simulator({ onStepChange } = {}) {
           </p>
 
           <div className="mt-4 flex flex-col gap-3 lg:flex-row">
-            <a href={buildWhatsappLink()} target="_blank" rel="noopener noreferrer" className="block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110">Abrir conversa no WhatsApp novamente</a>
+            <a
+              href={buildWhatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
+            >
+              Abrir conversa no WhatsApp novamente
+            </a>
             <button
               type="button"
               onClick={() => setStep(4)}
@@ -1009,6 +983,7 @@ export default function Simulator({ onStepChange } = {}) {
           </div>
         </div>
       )}
+
     </div>
   )
 }
