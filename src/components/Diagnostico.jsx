@@ -62,6 +62,8 @@ export default function Diagnostico() {
     year: 'numeric',
   })
 
+  const paginaUrl = window.location.href
+
   const whatsappMessage = [
     'Olá! Recebi meu diagnóstico de oportunidades tributárias da Hezus e gostaria de agendar uma apresentação.',
     `Empresa: ${data.nome}`,
@@ -69,8 +71,31 @@ export default function Diagnostico() {
   ].join('\n')
   const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`
 
+  // Sem número: abre o WhatsApp deixando a própria pessoa escolher pra quem
+  // encaminhar (inclusive "Mensagens para mim", pra guardar o link).
+  const compartilharWhatsappLink = `https://wa.me/?text=${encodeURIComponent(
+    `Meu diagnóstico tributário da Hezus: ${paginaUrl}`
+  )}`
+
+  const mailtoLink = `mailto:?subject=${encodeURIComponent(
+    `Diagnóstico tributário — ${data.nome}`
+  )}&body=${encodeURIComponent(
+    `Segue o diagnóstico de oportunidades tributárias gerado pela Hezus Capital e Tributos.\n\n${paginaUrl}`
+  )}`
+
+  const handleBaixarPdf = () => {
+    window.print()
+  }
+
   return (
     <div className="min-h-screen text-ice">
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { background: white !important; color: black !important; }
+        }
+      `}</style>
+
       <header className="border-b border-line bg-white/[0.02] px-5 py-10 text-center sm:px-6 sm:py-16">
         <p className="section-label">Diagnóstico de oportunidades tributárias</p>
         <h1 className="mt-4 font-display text-2xl font-bold sm:text-4xl">{data.nome}</h1>
@@ -80,6 +105,30 @@ export default function Diagnostico() {
       </header>
 
       <main className="mx-auto mt-10 max-w-4xl px-5 sm:px-6">
+        <div className="no-print mb-8 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleBaixarPdf}
+            className="rounded-full border border-line px-4 py-2 text-xs font-semibold text-ice/70 transition hover:border-ice/40"
+          >
+            Baixar em PDF
+          </button>
+          <a
+            href={mailtoLink}
+            className="rounded-full border border-line px-4 py-2 text-xs font-semibold text-ice/70 transition hover:border-ice/40"
+          >
+            Enviar por e-mail
+          </a>
+          <a
+            href={compartilharWhatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-line px-4 py-2 text-xs font-semibold text-ice/70 transition hover:border-ice/40"
+          >
+            Enviar pelo WhatsApp
+          </a>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-gold/30 bg-gold/10 p-5">
             <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada em 1 ano</p>
@@ -172,7 +221,7 @@ export default function Diagnostico() {
           valor ou de resultado.
         </p>
 
-        <section className="mt-12 rounded-2xl border border-line bg-white/[0.03] p-6 text-center sm:p-10">
+        <section className="no-print mt-12 rounded-2xl border border-line bg-white/[0.03] p-6 text-center sm:p-10">
           <p className="section-label">Próximo passo</p>
           <h2 className="mt-2 font-display text-xl sm:text-2xl">Vamos transformar diagnóstico em caixa.</h2>
           <p className="mx-auto mt-3 max-w-md text-sm text-ice/60">
