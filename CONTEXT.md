@@ -16,24 +16,25 @@
 - Contato: WhatsApp +55 41 99520-6026, e-mail contato@hezus.com.br.
 
 ## Estrutura do código
-- `src/App.jsx` — se a URL tem `?diagnostico=`, renderiza só `<Diagnostico />`. Senão, monta a landing page inteira, na ordem: Navbar, Hero (com Simulator embutido), TrustBar, Numbers, QuemSomos, Method, MethodDeep, Metodologia, Services, Atuacao, HowItWorks, Tecnologia, Testimonials, FAQ, Contato, LeadForm, Footer, WhatsAppButton. **`ClientPanel` não está mais na lista — ver Pendências.**
-- `src/components/` — um arquivo por seção, incluindo `CtaButtons.jsx` (2 botões padrão reutilizáveis), `Simulator.jsx` (wizard de 5 passos) e `Diagnostico.jsx` (página de relatório compartilhável).
-- `src/utils/diagnosticoShared.js` — funções e constantes compartilhadas entre `Simulator.jsx` e `Diagnostico.jsx` (ver seção própria abaixo).
+- `src/App.jsx` — se a URL tem `?diagnostico=`, renderiza só `<Diagnostico />`. Senão, monta a landing page inteira, na ordem: Navbar, Hero (com Simulator embutido), TrustBar, Numbers, QuemSomos, Method, MethodDeep, Metodologia, Services, Atuacao, HowItWorks, Tecnologia, Testimonials, FAQ, Contato, LeadForm, Footer, WhatsAppButton. **`ClientPanel` não está na lista — Everton está reavaliando se volta.**
+- `src/components/` — um arquivo por seção, incluindo `CtaButtons.jsx` (2 botões padrão reutilizáveis), `Simulator.jsx` (wizard de 5 passos) e `Diagnostico.jsx` (página de relatório compartilhável). **`Numbers.jsx` existe mas ainda não foi revisado pelo Claude — conteúdo desconhecido.**
+- `src/utils/diagnosticoShared.js` — funções e constantes compartilhadas entre `Simulator.jsx` e `Diagnostico.jsx`.
 - `src/hooks/useReveal.js` — hook de animação de entrada (scroll reveal).
 - `tailwind.config.js` — paleta e tipografia da marca (cores: `graphite`, `ice`, `blue`, `blue-light`, `gold`, `line`).
 
 ## Sistema de diagnóstico compartilhável (Simulator + diagnosticoShared + Diagnostico)
 Fluxo completo, sem precisar de backend:
 1. Usuário preenche o `Simulator.jsx` (CNPJ validado, nome auto-preenchido via BrasilAPI, segmento, hipóteses filtradas por regime tributário).
-2. No resultado (passo 5), os dados viram um objeto (nome, cnpj, regime, faturamento, faixas de valor, lista de hipóteses com fundamento/condição/certeza) que é codificado em base64 pela função `buildDiagnosticoUrl()` (de `diagnosticoShared.js`) e vira um link tipo `seusite.com/?diagnostico=XXXXX`.
-3. Esse link aparece em 3 lugares: botão "Ver diagnóstico completo", botão "Copiar link", e embutido na mensagem do WhatsApp e no e-mail (EmailJS).
-4. Ao abrir esse link, o `App.jsx` detecta o parâmetro e renderiza `Diagnostico.jsx`, que decodifica os dados (`decodeDiagnostico()`) e mostra um relatório formatado — sem re-preencher nada.
-- `CERTEZA_CONFIG` (em `diagnosticoShared.js`) define 3 níveis: `consolidado` (azul), `defensavel` (dourado), `validacao` (neutro) — cada hipótese do simulador tem um desses níveis.
+2. No resultado (passo 5), os dados viram um objeto que é codificado em base64 pela função `buildDiagnosticoUrl()` e vira um link tipo `seusite.com/?diagnostico=XXXXX`.
+3. **Passo 5 mostra só um resumo compacto** (faixas de valor + badges de contagem por grau de certeza, ex: "2 frentes · Consolidado") — não repete mais a lista item a item. O detalhamento completo (Fundamento, Condição, numeral romano, composição visual) mora só na página `Diagnostico.jsx`, acessível pelo link.
+4. Esse link aparece em 3 lugares: botão "Ver diagnóstico completo", botão "Copiar link", e embutido na mensagem do WhatsApp e no e-mail (EmailJS).
+5. Ao abrir o link, `App.jsx` detecta o parâmetro e renderiza `Diagnostico.jsx`, que decodifica os dados e mostra o relatório completo formatado.
+- `CERTEZA_CONFIG` (em `diagnosticoShared.js`) define 3 níveis: `consolidado` (azul), `defensavel` (dourado), `validacao` (neutro).
 - Config do EmailJS: `service_8wpx9uq` / `template_glqg928` / chave pública `Sr1K9lFnEDRGBozQN`, destino `hezus.simulador@gmail.com`.
-- A alíquota de PIS/COFINS não-cumulativo (9,25%) é a única baseada em lei explícita (Lei 10.637/2002 e 10.833/2003); as demais faixas min/max das 20 hipóteses são estimativas de mercado — revisar se houver dado real de portfólio.
+- A alíquota de PIS/COFINS não-cumulativo (9,25%) é a única baseada em lei explícita (Lei 10.637/2002 e 10.833/2003); as demais faixas min/max das 20 hipóteses são estimativas de mercado.
 
 ## Metodologia.jsx (seção da landing page)
-Caso ilustrativo fictício ("Metalúrgica Exemplo Ltda.", Lucro Real) com 4 frentes de recuperação, cada uma com grau de certeza, fundamento legal e condição. Abaixo, 4 etapas do processo. Aviso explícito de que é caso fictício. Termina com `<CtaButtons />`.
+Caso ilustrativo fictício ("Metalúrgica Exemplo Ltda.", Lucro Real) com 4 frentes de recuperação, grau de certeza, fundamento legal e condição. 4 etapas do processo. Aviso explícito de caso fictício. Termina com `<CtaButtons />`.
 - **Menciona "taxa de êxito" como modelo de cobrança** — ainda não confirmado com o Everton se é isso mesmo que a Hezus pratica.
 
 ## Área "Atuação" (Atuacao.jsx) — duas frentes
@@ -42,19 +43,19 @@ Caso ilustrativo fictício ("Metalúrgica Exemplo Ltda.", Lucro Real) com 4 fren
 
 ## Formulário de lead (LeadForm.jsx)
 - Campos: Nome, Empresa, Faturamento aproximado, WhatsApp.
-- **Pendência técnica ainda não resolvida**: esse formulário específico ainda não está conectado a nenhum destino real (só faz `setSent(true)` local). O `Simulator.jsx` já resolveu isso pro fluxo dele via EmailJS + WhatsApp + link de diagnóstico — avaliar se `LeadForm.jsx` devia ser substituído por esse mesmo mecanismo, ou até removido, já que o Simulator cobre a mesma necessidade de forma mais completa.
+- **Pendência técnica ainda não resolvida**: não conectado a nenhum destino real (só `setSent(true)` local). Avaliar se devia usar o mesmo mecanismo do `Simulator.jsx` (EmailJS + link de diagnóstico).
 
 ## Problema técnico recorrente: bug de colagem no editor do GitHub
-Quando uma tag `<a` fica **sozinha em uma linha** (com atributos nas linhas seguintes), o editor web do GitHub apaga essa linha silenciosamente ao colar, quebrando o JSX. Já aconteceu repetidamente em `Navbar.jsx`, `Hero.jsx`, `LeadForm.jsx`, `Simulator.jsx` (2 vezes) e quase em `Diagnostico.jsx` (corrigido antes de colar).
-**Regra permanente**: sempre escrever tags `<a>` com todos os atributos em uma única linha antes de entregar código pro Everton colar. Quando o arquivo já existe com esse bug, localizar o trecho via Ctrl+F pelo texto visível (ex: "Ver diagnóstico completo") e trocar só aquele bloco, em vez de reescrever o arquivo inteiro — é mais rápido de confirmar que funcionou.
-**Observação de processo**: arquivos grandes mandados como anexo/download pra baixar têm gerado confusão (Everton não consegue achar/baixar o anexo às vezes). Preferir, quando o trecho a corrigir for pequeno, dar instrução de Ctrl+F + substituição pontual, reservando o anexo de arquivo inteiro só quando a mudança for extensa.
+Quando uma tag `<a` fica **sozinha em uma linha** (com atributos nas linhas seguintes), o editor web do GitHub apaga essa linha silenciosamente ao colar, quebrando o JSX. **Padrão identificado**: esse bug volta a acontecer especificamente no botão "Ver diagnóstico completo" do `Simulator.jsx` toda vez que a IA do Lovable regenera esse arquivo (já aconteceu 4 vezes) — parece que o Lovable tem preferência por formatar `<a>` em múltiplas linhas, o que é ok pro build do Lovable em si (React/JSX aceita), mas quebra especificamente na hora de colar no editor web do GitHub.
+**Regra permanente**: sempre escrever tags `<a>` com todos os atributos em uma única linha antes de entregar código pro Everton colar. Ao revisar qualquer novo código vindo do Lovable, **procurar especificamente por `<a` sozinho em início de linha antes de aprovar**. Quando o arquivo já existe com esse bug, localizar o trecho via Ctrl+F pelo texto visível e trocar só aquele bloco.
+**Observação de processo**: arquivos grandes como anexo/download têm gerado confusão às vezes (Everton não encontra o anexo). Quando isso acontecer, oferecer mandar o texto direto no chat como alternativa.
 
 ## Regra de conteúdo: nunca reproduzir dados de concorrentes como se fossem da Hezus
 Everton colou uma vez um FAQ + números ("11 anos de atuação", "95% de sucesso", "232 empresas", "R$ 1 bilhão recuperado") que era cópia literal do site de um concorrente real (JP Balaban, citado pelo nome). Recusado — seria propaganda enganosa e reforça "direito tributário" (problema de OAB). Se pedido de novo: sempre oferecer a mesma estrutura visual com dados reais/confirmados da Hezus, nunca copiar números ou nome de concorrente.
 
 ## Pendências já identificadas
-1. **Confirmar se a correção pontual do `Simulator.jsx` (botão "Ver diagnóstico completo") foi de fato colada** — último ponto em aberto no momento deste SALVAR.
-2. Decidir se `ClientPanel.jsx` volta pro `App.jsx` ou fica removido definitivamente (Everton está reavaliando).
+1. Revisar conteúdo de `Numbers.jsx` (apareceu no `App.jsx`, ainda não documentado).
+2. Decidir se `ClientPanel.jsx` volta pro `App.jsx` ou fica removido definitivamente.
 3. Conectar `LeadForm.jsx` a um destino real, ou substituí-lo pelo mecanismo do `Simulator.jsx`.
 4. Substituir os placeholders de CNPJ/depoimentos no rodapé e em `Testimonials.jsx`.
 5. Confirmar se "taxa de êxito" é realmente o modelo de cobrança da Hezus (mencionado no `Metodologia.jsx`).
@@ -76,4 +77,4 @@ Everton colou uma vez um FAQ + números ("11 anos de atuação", "95% de sucesso
 2. Peça: "busca esse link e me diz que já entendeu o projeto."
 3. Só peça upload de arquivo específico (não o zip inteiro) se for mexer em algo pontual daquele arquivo.
 
-**Convenção "SALVAR":** quando o Everton escrever a palavra `SALVAR` sozinha numa mensagem, o Claude deve: (1) resumir o que foi resolvido/decidido nesta conversa desde a última atualização; (2) reescrever este arquivo CONTEXT.md inteiro, já atualizado, pronto pra ele copiar e colar no GitHub (Edit → Ctrl+A → colar → Commit changes); (3) não esperar o fim da conversa pra isso — pode e deve ser pedido a qualquer momento, assim que algo importante for concluído.
+**Convenção "SALVAR":** quando o Everton escrever a palavra `SALVAR` sozinha numa mensagem, o Claude deve: (1) resumir o que foi resolvido/decidido nesta conversa desde a última atualização; (2) reescrever este arquivo CONTEXT.md inteiro, já atualizado, pronto pra ele copiar e colar no GitHub (Edit → Ctrl+A → colar → Commit changes); (3) não esperar o fim da conversa pra isso — pode e deve ser pedido a qualquer momento.
