@@ -4,7 +4,7 @@ const steps = [
   { n: '01', title: 'Diagnóstico', text: 'Levantamento dos dados fiscais e contábeis da empresa.' },
   { n: '02', title: 'Classificação de oportunidades', text: 'Cada oportunidade é estratificada por risco, com justificativa.' },
   { n: '03', title: 'Execução', text: 'Cálculo e levantamento formal dos créditos administrativos aprovados.' },
-  { n: '04', title: 'Acompanhamento contínuo', text: 'Status e economia estimada disponíveis em tempo real no painel.' },
+  { n: '04', title: 'Entrega do diagnóstico', text: 'Relatório completo — por link, e-mail ou WhatsApp — com cada valor e seu grau de certeza.' },
 ]
 
 export default function HowItWorks() {
@@ -13,7 +13,7 @@ export default function HowItWorks() {
     <section className="mx-auto max-w-6xl px-5 sm:px-6 py-16 sm:py-24">
       <div ref={ref} className="reveal reveal-init mb-14 max-w-xl">
         <p className="section-label mb-3">Como funciona</p>
-        <h2 className="font-display text-3xl">Um processo, do diagnóstico ao acompanhamento</h2>
+        <h2 className="font-display text-3xl">Um processo, do diagnóstico à entrega</h2>
       </div>
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => (
@@ -30,4 +30,3 @@ export default function HowItWorks() {
     </section>
   )
 }
-
