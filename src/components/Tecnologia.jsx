@@ -54,7 +54,7 @@ export default function Tecnologia() {
           {SYSTEMS.map((s) => (
             <div
               key={s.n}
-              className="grid gap-6 rounded-2xl border border-line bg-graphite p-6 transition hover:border-blue/30 sm:p-8 lg:grid-cols-[auto_1fr_auto] lg:items-start"
+              className="scan-border grid gap-6 rounded-2xl border border-line bg-graphite p-6 transition hover:border-blue/30 sm:p-8 lg:grid-cols-[auto_1fr_auto] lg:items-start"
             >
               <span className="font-mono text-2xl text-blue-light/60">{s.n}</span>
               <div>
@@ -67,12 +67,15 @@ export default function Tecnologia() {
                 <p className="mt-3 text-xs text-ice/40">{s.footnote}</p>
               </div>
               <span
-                className={`h-fit whitespace-nowrap rounded-full border px-3 py-1 font-mono text-xs ${
+                className={`flex h-fit items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 font-mono text-xs ${
                   s.status === 'ativo'
                     ? 'border-blue/30 bg-blue/10 text-blue-light'
                     : 'border-line text-ice/40'
                 }`}
               >
+                {s.status === 'ativo' && (
+                  <span className="pulse-live h-1.5 w-1.5 rounded-full bg-blue" />
+                )}
                 {s.status === 'ativo' ? 'Em operação' : 'Em breve'}
               </span>
             </div>
