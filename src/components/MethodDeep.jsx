@@ -83,7 +83,7 @@ export default function MethodDeep() {
               só os códigos mais frequentes.
             </p>
           </div>
-          <div className="rounded-2xl border border-line bg-white/[0.03] p-6">
+          <div className="scan-border rounded-2xl border border-line bg-white/[0.03] p-6">
             <p className="mb-4 text-xs uppercase tracking-wide text-ice/40">
               Códigos frequentemente ignorados
             </p>
