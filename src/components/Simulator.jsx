@@ -932,6 +932,8 @@ export default function Simulator({ onStepChange } = {}) {
             </div>
           </div>
 
+          {/* Resumo compacto — o detalhamento item a item (Fundamento, Condição,
+              composição por grau de certeza) mora só no link do diagnóstico completo. */}
           <div className="mt-8 border-t border-line pt-6">
             <p className="section-label mb-1">Como chegamos nesse número</p>
             <h3 className="font-display text-lg">
@@ -947,47 +949,41 @@ export default function Simulator({ onStepChange } = {}) {
               qualquer número virar promessa.
             </p>
 
-            <div className="mt-5 grid gap-3 lg:grid-cols-2">
-              {itensDoDiagnostico.map((item, i) => {
-                const cfg = CERTEZA_CONFIG[item.certeza]
+            <div className="mt-4 flex flex-wrap gap-2">
+              {CERTEZA_ORDER.map((key) => {
+                const count = itensDoDiagnostico.filter((item) => item.certeza === key).length
+                if (count === 0) return null
+                const cfg = CERTEZA_CONFIG[key]
                 return (
-                  <div key={item.id} className="rounded-lg border border-line bg-white/[0.02] p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-medium text-ice/85">
-                        <span className="mr-2 font-mono text-blue-light/70">{toRoman(i + 1)}</span>
-                        {item.label}
-                      </p>
-                    </div>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${cfg.badge}`}>
-                        {cfg.label}
-                      </span>
-                      <span className="font-mono text-sm text-ice/80">
-                        {formatBRL(item.valorMin)} – {formatBRL(item.valorMax)}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs leading-relaxed text-ice/50">
-                      <span className="font-medium text-ice/60">Fundamento: </span>
-                      {item.explicacao}
-                    </p>
-                    <p className="mt-1 text-xs leading-relaxed text-ice/50">
-                      <span className="font-medium text-ice/60">Condição para virar caixa: </span>
-                      {item.condicao}
-                    </p>
-                  </div>
+                  <span
+                    key={key}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${cfg.badge}`}
+                  >
+                    {count} {count === 1 ? 'frente' : 'frentes'} · {cfg.label}
+                  </span>
                 )
               })}
             </div>
           </div>
 
-          <div className="mt-6 rounded-lg border border-line bg-white/[0.02] p-4">
-            <p className="text-xs uppercase tracking-wide text-ice/50">Diagnóstico completo</p>
+          <div className="mt-6 rounded-lg border border-blue/30 bg-blue/[0.05] p-4">
+            <p className="text-xs uppercase tracking-wide text-blue-light/70">Diagnóstico completo</p>
             <p className="mt-1 text-sm text-ice/60">
-              Gere um link único com esse diagnóstico completo, pronto pra enviar por
-              WhatsApp ou e-mail — sem precisar refazer a simulação.
+              Veja cada frente detalhada — Fundamento, condição para virar caixa e a
+              composição visual por grau de certeza — num link único, pronto pra
+              enviar por WhatsApp, e-mail ou compartilhar com seu contador/sócio.
+              Sem precisar refazer a simulação.
             </p>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-              <a href={diagnosticoUrl} target="_blank" rel="noopener noreferrer" className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto">Ver diagnóstico completo</a>              <button
+              <a
+                href={diagnosticoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
+              >
+                Ver diagnóstico completo
+              </a>
+              <button
                 type="button"
                 onClick={handleCopiarLink}
                 className="w-full rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ice/70 transition hover:border-ice/40 sm:w-auto"
