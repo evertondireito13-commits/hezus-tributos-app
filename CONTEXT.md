@@ -4,56 +4,62 @@
 
 ## Visão geral
 - Site institucional (landing page) da **Hezus Capital e Tributos**, uma consultoria tributária, contábil e em licitações públicas — **não é escritório de advocacia** (regra de linguagem explícita no projeto: evitar termos jurídicos, usar termos técnico-contábeis).
-- Landing page com "pegada de app": simulador multi-step no hero (CNPJ real, validação, sugestão de hipóteses), painel do cliente ilustrativo, timeline do processo, seção de metodologia com caso ilustrativo.
-- Stack: **React + Vite + Tailwind CSS**, single-page (tudo montado em `src/App.jsx`).
+- Landing page com "pegada de app": simulador multi-step no hero (CNPJ real, validação, sugestão de hipóteses, gera relatório compartilhável), painel do cliente ilustrativo (status indefinido, ver Pendências), timeline do processo, seção de metodologia com caso ilustrativo.
+- Stack: **React + Vite + Tailwind CSS**, single-page (tudo montado em `src/App.jsx`), com uma exceção: `?diagnostico=<dados>` na URL renderiza a página `Diagnostico.jsx` no lugar da landing page (roteamento simples via `URLSearchParams`, sem react-router).
 - Projeto conectado ao **Lovable** (sync automático via git, aviso em `AGENTS.md` pra nunca dar force-push/rebase na branch conectada).
 - Repositório: https://github.com/evertondireito13-commits/hezus-tributos-app
 
 ## Responsáveis / equipe (mostrados no site, seção "Quem somos")
-- **Everton Pereira** — Consultor Tributário, Contábil e em Licitações Públicas. Formação em Direito e Ciências Contábeis. Responsável por diagnósticos tributários, recuperação de créditos, planejamento tributário/financeiro.
-- **Paulo Felipe** — Consultor em Engenharia Civil, Licitações e Contratos Públicos. Formação em Engenharia Civil, experiência em execução de obras e licitações públicas.
+- **Everton Pereira** — Consultor Tributário, Contábil e em Licitações Públicas. Formação em Direito e Ciências Contábeis.
+- **Paulo Felipe** — Consultor em Engenharia Civil, Licitações e Contratos Públicos. Formação em Engenharia Civil.
 - Endereço: Alameda Dom Pedro II, 155 — Batel, Curitiba/PR. Atendimento em todo o Brasil.
 - Contato: WhatsApp +55 41 99520-6026, e-mail contato@hezus.com.br.
 
 ## Estrutura do código
-- `src/App.jsx` — monta a página inteira, na ordem: Navbar, Hero (com Simulator embutido), TrustBar, Numbers, QuemSomos, Method, MethodDeep, **Metodologia**, Services, Atuacao, HowItWorks, ClientPanel, Tecnologia, Testimonials, FAQ, Contato, LeadForm, Footer, WhatsAppButton.
-- `src/components/` — um arquivo por seção. Inclui `CtaButtons.jsx` (componente reutilizável com os 2 botões padrão de CTA, usado em várias seções) e `Simulator.jsx` (wizard de 5 passos, provavelmente renderizado dentro de `Hero.jsx` — confirmar).
+- `src/App.jsx` — se a URL tem `?diagnostico=`, renderiza só `<Diagnostico />`. Senão, monta a landing page inteira, na ordem: Navbar, Hero (com Simulator embutido), TrustBar, Numbers, QuemSomos, Method, MethodDeep, Metodologia, Services, Atuacao, HowItWorks, Tecnologia, Testimonials, FAQ, Contato, LeadForm, Footer, WhatsAppButton. **`ClientPanel` não está mais na lista — ver Pendências.**
+- `src/components/` — um arquivo por seção, incluindo `CtaButtons.jsx` (2 botões padrão reutilizáveis), `Simulator.jsx` (wizard de 5 passos) e `Diagnostico.jsx` (página de relatório compartilhável).
+- `src/utils/diagnosticoShared.js` — funções e constantes compartilhadas entre `Simulator.jsx` e `Diagnostico.jsx` (ver seção própria abaixo).
 - `src/hooks/useReveal.js` — hook de animação de entrada (scroll reveal).
 - `tailwind.config.js` — paleta e tipografia da marca (cores: `graphite`, `ice`, `blue`, `blue-light`, `gold`, `line`).
 
-## Simulator.jsx (wizard de diagnóstico)
-5 passos: (1) CNPJ + dados de contato — CNPJ validado por dígito verificador, nome da empresa auto-preenchido via BrasilAPI e travado enquanto confirmado; (2) identificação de segmento — automática via CNAE ou manual; (3) seleção de hipóteses tributárias entre as 20 cadastradas, **filtradas pelas juridicamente aplicáveis ao regime tributário escolhido** (ex: crédito de PIS/COFINS não-cumulativo só aparece pra Lucro Real) e ordenadas por recomendação de segmento; (4) confirmação se tem SPED/EFDs; (5) resultado — faixa estimada em 1 ano e em 5 anos retroativos, abre WhatsApp com mensagem pronta (`5541995206026`) e envia cópia por e-mail via EmailJS (`service_8wpx9uq` / `template_glqg928`, chave pública `Sr1K9lFnEDRGBozQN`, destino `hezus.simulador@gmail.com`).
-- A alíquota de PIS/COFINS não-cumulativo (9,25%) é a única baseada em lei explícita (Lei 10.637/2002 e 10.833/2003); as demais faixas min/max são estimativas de mercado — revisar se houver dado real de portfólio.
+## Sistema de diagnóstico compartilhável (Simulator + diagnosticoShared + Diagnostico)
+Fluxo completo, sem precisar de backend:
+1. Usuário preenche o `Simulator.jsx` (CNPJ validado, nome auto-preenchido via BrasilAPI, segmento, hipóteses filtradas por regime tributário).
+2. No resultado (passo 5), os dados viram um objeto (nome, cnpj, regime, faturamento, faixas de valor, lista de hipóteses com fundamento/condição/certeza) que é codificado em base64 pela função `buildDiagnosticoUrl()` (de `diagnosticoShared.js`) e vira um link tipo `seusite.com/?diagnostico=XXXXX`.
+3. Esse link aparece em 3 lugares: botão "Ver diagnóstico completo", botão "Copiar link", e embutido na mensagem do WhatsApp e no e-mail (EmailJS).
+4. Ao abrir esse link, o `App.jsx` detecta o parâmetro e renderiza `Diagnostico.jsx`, que decodifica os dados (`decodeDiagnostico()`) e mostra um relatório formatado — sem re-preencher nada.
+- `CERTEZA_CONFIG` (em `diagnosticoShared.js`) define 3 níveis: `consolidado` (azul), `defensavel` (dourado), `validacao` (neutro) — cada hipótese do simulador tem um desses níveis.
+- Config do EmailJS: `service_8wpx9uq` / `template_glqg928` / chave pública `Sr1K9lFnEDRGBozQN`, destino `hezus.simulador@gmail.com`.
+- A alíquota de PIS/COFINS não-cumulativo (9,25%) é a única baseada em lei explícita (Lei 10.637/2002 e 10.833/2003); as demais faixas min/max das 20 hipóteses são estimativas de mercado — revisar se houver dado real de portfólio.
 
-## Metodologia.jsx (seção nova)
-Caso ilustrativo fictício ("Metalúrgica Exemplo Ltda.", Lucro Real) com 4 frentes de recuperação, cada uma com grau de certeza (`Consolidado` / `Defensável` / `Sujeito a validação`), fundamento legal e condição para "virar caixa". Abaixo, 4 etapas do processo (Mapeamento → Prova documental → Constituição do crédito → Recuperação). Aviso explícito de que é caso fictício. Termina com `<CtaButtons />`.
-- **Menciona "taxa de êxito" como modelo de cobrança** — confirmar com o Everton se é isso mesmo que a Hezus pratica antes de publicar definitivamente.
+## Metodologia.jsx (seção da landing page)
+Caso ilustrativo fictício ("Metalúrgica Exemplo Ltda.", Lucro Real) com 4 frentes de recuperação, cada uma com grau de certeza, fundamento legal e condição. Abaixo, 4 etapas do processo. Aviso explícito de que é caso fictício. Termina com `<CtaButtons />`.
+- **Menciona "taxa de êxito" como modelo de cobrança** — ainda não confirmado com o Everton se é isso mesmo que a Hezus pratica.
 
 ## Área "Atuação" (Atuacao.jsx) — duas frentes
-1. **Tributário**: otimização de carga tributária, recuperação de créditos (ICMS/IPI/PIS/COFINS), créditos sobre produtos intermediários, oportunidades consolidadas por STF/STJ (ex: exclusão do ICMS da base de PIS/COFINS), subvenções para investimento, reforma tributária (LC 214 — transição CBS/IBS, janela de créditos antes de 2027), suporte técnico em autuações (defesa formal fica com escritório de advocacia parceiro).
-2. **Licitações Públicas**: análise de editais, estruturação de propostas, habilitação e documentação, apoio técnico em questionamentos de edital, gestão de contratos administrativos.
-
-## Painel do cliente (ClientPanel.jsx)
-Mockup ilustrativo (dados fake: "Empresa Exemplo Ltda.") mostrando créditos identificados, status do processo, economia estimada — deixa claro que são "dados ilustrativos" e que o cliente real terá acesso ao painel de verdade após iniciar o diagnóstico. **Ainda não há painel real implementado**, é só a promessa visual na landing page.
+1. **Tributário**: otimização de carga tributária, recuperação de créditos, oportunidades consolidadas por STF/STJ, subvenções, reforma tributária (LC 214), suporte técnico em autuações (defesa formal fica com escritório de advocacia parceiro).
+2. **Licitações Públicas**: análise de editais, estruturação de propostas, habilitação, apoio técnico em questionamentos, gestão de contratos administrativos.
 
 ## Formulário de lead (LeadForm.jsx)
 - Campos: Nome, Empresa, Faturamento aproximado, WhatsApp.
-- **Pendência técnica confirmada no próprio README**: o formulário ainda não está conectado a nenhum destino real (hoje só faz `setSent(true)` local, sem salvar em lugar nenhum). Precisa ligar a algo como Supabase, planilha ou e-mail antes de publicar. (Obs: `Simulator.jsx` já resolveu isso pro próprio fluxo dele via EmailJS + WhatsApp — avaliar se `LeadForm.jsx` devia usar o mesmo mecanismo.)
+- **Pendência técnica ainda não resolvida**: esse formulário específico ainda não está conectado a nenhum destino real (só faz `setSent(true)` local). O `Simulator.jsx` já resolveu isso pro fluxo dele via EmailJS + WhatsApp + link de diagnóstico — avaliar se `LeadForm.jsx` devia ser substituído por esse mesmo mecanismo, ou até removido, já que o Simulator cobre a mesma necessidade de forma mais completa.
 
 ## Problema técnico recorrente: bug de colagem no editor do GitHub
-Quando uma tag `<a` fica **sozinha em uma linha** (com atributos nas linhas seguintes, ex: `<a\n  href="..."\n>`), o editor web do GitHub apaga essa linha silenciosamente ao colar, quebrando o JSX (`Unexpected token`, `Expected corresponding JSX closing tag`, etc.). Já aconteceu em `Navbar.jsx`, `Hero.jsx`, `LeadForm.jsx` e `Simulator.jsx`.
-**Regra permanente pra qualquer edição futura**: sempre escrever tags `<a>` com todos os atributos em uma única linha, nunca quebrada em múltiplas linhas, antes de entregar código pro Everton colar.
+Quando uma tag `<a` fica **sozinha em uma linha** (com atributos nas linhas seguintes), o editor web do GitHub apaga essa linha silenciosamente ao colar, quebrando o JSX. Já aconteceu repetidamente em `Navbar.jsx`, `Hero.jsx`, `LeadForm.jsx`, `Simulator.jsx` (2 vezes) e quase em `Diagnostico.jsx` (corrigido antes de colar).
+**Regra permanente**: sempre escrever tags `<a>` com todos os atributos em uma única linha antes de entregar código pro Everton colar. Quando o arquivo já existe com esse bug, localizar o trecho via Ctrl+F pelo texto visível (ex: "Ver diagnóstico completo") e trocar só aquele bloco, em vez de reescrever o arquivo inteiro — é mais rápido de confirmar que funcionou.
+**Observação de processo**: arquivos grandes mandados como anexo/download pra baixar têm gerado confusão (Everton não consegue achar/baixar o anexo às vezes). Preferir, quando o trecho a corrigir for pequeno, dar instrução de Ctrl+F + substituição pontual, reservando o anexo de arquivo inteiro só quando a mudança for extensa.
 
 ## Regra de conteúdo: nunca reproduzir dados de concorrentes como se fossem da Hezus
-Everton colou uma vez um FAQ + bloco de números ("11 anos de atuação", "95% de sucesso", "232 empresas", "R$ 1 bilhão recuperado") que era cópia literal do site de um concorrente real (JP Balaban, inclusive citado pelo nome em uma das perguntas). Recusado: usar isso seria propaganda enganosa (número de histórico que não é da Hezus) e reforça a palavra "direito tributário" (problema de OAB). Se pedido de novo, sempre oferecer reconstruir a mesma estrutura visual (FAQ + números em destaque) com dados reais/confirmados da Hezus, nunca copiar números ou nome de concorrente.
+Everton colou uma vez um FAQ + números ("11 anos de atuação", "95% de sucesso", "232 empresas", "R$ 1 bilhão recuperado") que era cópia literal do site de um concorrente real (JP Balaban, citado pelo nome). Recusado — seria propaganda enganosa e reforça "direito tributário" (problema de OAB). Se pedido de novo: sempre oferecer a mesma estrutura visual com dados reais/confirmados da Hezus, nunca copiar números ou nome de concorrente.
 
 ## Pendências já identificadas
-1. Conectar o formulário de lead (`LeadForm.jsx`) a um destino real (ou substituir pelo mesmo mecanismo do `Simulator.jsx`).
-2. Substituir os placeholders de CNPJ, contato e depoimentos no rodapé e na seção de depoimentos (`Testimonials.jsx`).
-3. Confirmar com o Everton se "taxa de êxito" é realmente o modelo de cobrança da Hezus (mencionado no `Metodologia.jsx`).
-4. Decidir com o Everton os números reais (ou uma versão honesta "empresa nova, time experiente") pra uma futura seção de FAQ + estatísticas em destaque — sem reaproveitar dados de concorrente.
-5. Revisão de um advogado nas promessas de prazo e recuperação de crédito, antes de publicar definitivamente.
-6. Confirmar se `src/components/Simulator.jsx` já foi de fato substituído pelo arquivo corrigido (com a tag `<a>` final em linha única) — última pendência em aberto no momento deste SALVAR.
+1. **Confirmar se a correção pontual do `Simulator.jsx` (botão "Ver diagnóstico completo") foi de fato colada** — último ponto em aberto no momento deste SALVAR.
+2. Decidir se `ClientPanel.jsx` volta pro `App.jsx` ou fica removido definitivamente (Everton está reavaliando).
+3. Conectar `LeadForm.jsx` a um destino real, ou substituí-lo pelo mecanismo do `Simulator.jsx`.
+4. Substituir os placeholders de CNPJ/depoimentos no rodapé e em `Testimonials.jsx`.
+5. Confirmar se "taxa de êxito" é realmente o modelo de cobrança da Hezus (mencionado no `Metodologia.jsx`).
+6. Decidir números reais (ou versão honesta "empresa nova, time experiente") pra uma futura seção de FAQ + estatísticas — sem reaproveitar dados de concorrente.
+7. Revisão de um advogado nas promessas de prazo e recuperação de crédito, antes de publicar definitivamente.
 
 ## Regras de linguagem do projeto (importante manter sempre)
 | Evitar | Usar no lugar |
