@@ -565,17 +565,20 @@ export default function Simulator({ onStepChange } = {}) {
   }
 
   const handleVerEstimativa = () => {
-    setStep(5)
     const link = buildWhatsappLink()
     window.open(link, '_blank', 'noopener,noreferrer')
     sendLeadEmail()
+    // Navega a própria aba para a URL do diagnóstico: vira a única versão do
+    // resultado (a mesma que a pessoa pode compartilhar depois), sem "passo 5"
+    // escondido dentro do simulador pra se perder no celular.
+    window.location.href = diagnosticoUrl
   }
 
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
         <p className="section-label">Simulador</p>
-        <p className="text-xs text-ice/40">Passo {step} de 5</p>
+        <p className="text-xs text-ice/40">Passo {step} de 4</p>
       </div>
       <h2 className="font-display text-xl">Estimativa de créditos recuperáveis</h2>
 
@@ -897,88 +900,6 @@ export default function Simulator({ onStepChange } = {}) {
               className="w-full rounded-full bg-blue px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
             >
               Ver estimativa
-            </button>
-          </div>
-        </div>
-      )}
-
-      {step === 5 && (
-        <div className="mt-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-gold/30 bg-gold/10 p-5">
-              <p className="text-xs uppercase tracking-wide text-ice/50">Faixa estimada em 1 ano</p>
-              <p className="mt-1 font-mono text-2xl font-semibold text-gold">
-                {formatBRL(low)} – {formatBRL(high)}
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-blue/40 bg-blue/10 p-5">
-              <p className="text-xs uppercase tracking-wide text-ice/50">
-                Potencial em 5 anos retroativos
-              </p>
-              <p className="mt-1 font-mono text-2xl font-semibold text-blue">
-                {formatBRL(low5)} – {formatBRL(high5)}
-              </p>
-            </div>
-          </div>
-
-          <p className="mt-4 text-sm leading-relaxed text-ice/60">
-            Identificamos {itensDoDiagnostico.length}{' '}
-            {itensDoDiagnostico.length === 1 ? 'frente' : 'frentes'} de recuperação, com graus de
-            certeza diferentes — veja o detalhamento completo de cada uma no relatório abaixo.
-          </p>
-
-          <div className="mt-6 rounded-2xl border border-blue/30 bg-blue/[0.06] p-6">
-            <p className="text-xs uppercase tracking-wide text-ice/50">Relatório completo</p>
-            <p className="mt-1 text-sm text-ice/70">
-              Fundamento, condição para virar caixa e valor de cada frente, num relatório pronto
-              pra enviar — pra você, seu sócio ou seu contador conferirem com calma.
-            </p>
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <a
-                href={diagnosticoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full rounded-full bg-blue px-5 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
-              >
-                Ver relatório completo
-              </a>
-              <button
-                type="button"
-                onClick={handleCopiarLink}
-                className="w-full rounded-full border border-line px-5 py-3 text-sm font-semibold text-ice/70 transition hover:border-ice/40 sm:w-auto"
-              >
-                {linkCopiado ? 'Link copiado!' : 'Copiar link'}
-              </button>
-            </div>
-          </div>
-
-          <p className="mt-4 text-xs text-ice/50">
-            Estimativa preliminar e ilustrativa, sujeita a diagnóstico técnico
-            detalhado. Não constitui garantia de valor ou de resultado.
-          </p>
-
-          <p className="mt-3 text-xs text-ice/40">
-            Sua conversa no WhatsApp foi aberta em uma nova aba com os dados
-            preenchidos — é só confirmar o envio por lá.
-            {emailStatus === 'sent' && ' Também enviamos uma cópia por e-mail à nossa equipe.'}
-          </p>
-
-          <div className="mt-4 flex flex-col gap-3 lg:flex-row">
-            <a
-              href={buildWhatsappLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full rounded-full bg-blue px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
-            >
-              Abrir conversa no WhatsApp novamente
-            </a>
-            <button
-              type="button"
-              onClick={() => setStep(4)}
-              className="w-full rounded-full border border-line px-6 py-3 text-sm font-semibold text-ice/70 transition hover:border-ice/40"
-            >
-              Voltar
             </button>
           </div>
         </div>
