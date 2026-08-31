@@ -411,8 +411,6 @@ export default function Simulator({ onStepChange } = {}) {
     }
   }, [faturamento, selectedTeses])
 
-  // Lista as hipóteses reais selecionadas, ordenadas por grau de certeza,
-  // cada uma com seu valor, fundamento e condição para virar caixa.
   const itensDoDiagnostico = useMemo(() => {
     const selecionadas = TESES.filter((t) => selectedTeses.includes(t.id))
     const ordenadas = [...selecionadas].sort(
@@ -425,7 +423,6 @@ export default function Simulator({ onStepChange } = {}) {
     }))
   }, [selectedTeses, faturamentoAnual])
 
-  // Pacote de dados que vira o link único do diagnóstico completo (/?diagnostico=...)
   const diagnosticoUrl = useMemo(() => {
     const dados = {
       nome,
@@ -935,7 +932,6 @@ export default function Simulator({ onStepChange } = {}) {
             </div>
           </div>
 
-          {/* Metodologia aplicada ao caso real da empresa que simulou */}
           <div className="mt-8 border-t border-line pt-6">
             <p className="section-label mb-1">Como chegamos nesse número</p>
             <h3 className="font-display text-lg">
@@ -984,7 +980,6 @@ export default function Simulator({ onStepChange } = {}) {
             </div>
           </div>
 
-          {/* Link único do diagnóstico completo, no formato de relatório */}
           <div className="mt-6 rounded-lg border border-line bg-white/[0.02] p-4">
             <p className="text-xs uppercase tracking-wide text-ice/50">Diagnóstico completo</p>
             <p className="mt-1 text-sm text-ice/60">
@@ -992,14 +987,7 @@ export default function Simulator({ onStepChange } = {}) {
               WhatsApp ou e-mail — sem precisar refazer a simulação.
             </p>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-              <a
-                href={diagnosticoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
-              >
-                Ver diagnóstico completo
-              </a>
+              <a href={diagnosticoUrl} target="_blank" rel="noopener noreferrer" className="block w-full rounded-full bg-blue px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto">Ver diagnóstico completo</a>
               <button
                 type="button"
                 onClick={handleCopiarLink}
