@@ -1,66 +1,63 @@
+[CONTEXT.md](https://github.com/user-attachments/files/31665091/CONTEXT.md)
 # CONTEXT.md — Hezus Capital e Tributos (site institucional)
 
 > Este arquivo existe pra qualquer sessão nova do Claude (em qualquer conta) entender o projeto **sem precisar de upload de zip**. Basta colar o link bruto (raw) deste arquivo no chat e pedir pra buscar (fetch). Atualize este arquivo sempre que algo relevante mudar.
 
 ## Visão geral
 - Site institucional (landing page) da **Hezus Capital e Tributos**, uma consultoria tributária, contábil e em licitações públicas — **não é escritório de advocacia** (regra de linguagem explícita no projeto: evitar termos jurídicos, usar termos técnico-contábeis).
-- Landing page com "pegada de app": simulador multi-step no hero (CNPJ real, validação, sugestão de hipóteses, gera relatório compartilhável), painel do cliente ilustrativo (status indefinido, ver Pendências), timeline do processo, seção de metodologia com caso ilustrativo.
-- Stack: **React + Vite + Tailwind CSS**, single-page (tudo montado em `src/App.jsx`), com uma exceção: `?diagnostico=<dados>` na URL renderiza a página `Diagnostico.jsx` no lugar da landing page (roteamento simples via `URLSearchParams`, sem react-router).
+- Landing page com "pegada de app": simulador no topo (hero), timeline do processo.
+- Stack: **React + Vite + Tailwind CSS**, single-page (tudo montado em `src/App.jsx`).
 - Projeto conectado ao **Lovable** (sync automático via git, aviso em `AGENTS.md` pra nunca dar force-push/rebase na branch conectada).
 - Repositório: https://github.com/evertondireito13-commits/hezus-tributos-app
 
 ## Responsáveis / equipe (mostrados no site, seção "Quem somos")
-- **Everton Pereira** — Consultor Tributário, Contábil e em Licitações Públicas. Formação em Direito e Ciências Contábeis.
-- **Paulo Felipe** — Consultor em Engenharia Civil, Licitações e Contratos Públicos. Formação em Engenharia Civil.
+- **Everton Pereira** — Consultor Tributário, Contábil e em Licitações Públicas. Formação em Direito e Ciências Contábeis. Responsável por diagnósticos tributários, recuperação de créditos, planejamento tributário/financeiro.
+- **Paulo Felipe** — Consultor em Engenharia Civil, Licitações e Contratos Públicos. Formação em Engenharia Civil, experiência em execução de obras e licitações públicas.
 - Endereço: Alameda Dom Pedro II, 155 — Batel, Curitiba/PR. Atendimento em todo o Brasil.
 - Contato: WhatsApp +55 41 99520-6026, e-mail contato@hezus.com.br.
+- Números reais da empresa (ainda não implementados no FAQ do site): 3 anos de existência, sócios com 10+ anos de expertise em licitações/reestruturação, 87 empresas já atendidas.
 
 ## Estrutura do código
-- `src/App.jsx` — se a URL tem `?diagnostico=`, renderiza só `<Diagnostico />`. Senão, monta a landing page inteira, na ordem: Navbar, Hero (com Simulator embutido), TrustBar, Numbers, QuemSomos, Method, MethodDeep, Metodologia, Services, Atuacao, HowItWorks, Tecnologia, Testimonials, FAQ, Contato, LeadForm, Footer, WhatsAppButton. **`ClientPanel` não está na lista — Everton está reavaliando se volta.**
-- `src/components/` — um arquivo por seção, incluindo `CtaButtons.jsx` (2 botões padrão reutilizáveis), `Simulator.jsx` (wizard de 5 passos) e `Diagnostico.jsx` (página de relatório compartilhável). **`Numbers.jsx` existe mas ainda não foi revisado pelo Claude — conteúdo desconhecido.**
-- `src/utils/diagnosticoShared.js` — funções e constantes compartilhadas entre `Simulator.jsx` e `Diagnostico.jsx`.
+- `src/App.jsx` — monta a página inteira. Checa `?diagnostico=` na URL: se presente, renderiza só `Diagnostico.jsx` (página de relatório completo); senão, monta a landing normal (Navbar, Hero, TrustBar, QuemSomos, Method, MethodDeep, Services, Atuacao, HowItWorks, Tecnologia, Testimonials, FAQ, Contato, LeadForm, Footer, WhatsAppButton). **Não tem mais `<ClientPanel />`** — a seção "Painel do cliente" foi removida do site.
+- `src/components/` — um arquivo por seção.
+- `src/utils/diagnosticoShared.js` — constantes compartilhadas (REGIMES, CERTEZA_CONFIG/ORDER, WHATSAPP_NUMBER, formatBRL, toRoman) + `buildDiagnosticoUrl`/`decodeDiagnostico`, que codificam o resultado do simulador direto na URL (sem backend).
+- `src/components/Diagnostico.jsx` — página de relatório completo no estilo de um diagnóstico tributário real (referência: exemplo enviado de um escritório concorrente para uma empresa cliente): valores por frente, grau de certeza (Consolidado/Defensável/Em validação), CTA de agendamento. Tem botões "Baixar em PDF" (via `window.print()`), "Enviar por e-mail" e "Enviar pelo WhatsApp". O print preserva o tema escuro do site (usa `print-color-adjust: exact` — antes forçava fundo branco).
 - `src/hooks/useReveal.js` — hook de animação de entrada (scroll reveal).
-- `tailwind.config.js` — paleta e tipografia da marca (cores: `graphite`, `ice`, `blue`, `blue-light`, `gold`, `line`).
+- `tailwind.config.js` — paleta e tipografia da marca.
 
-## Sistema de diagnóstico compartilhável (Simulator + diagnosticoShared + Diagnostico)
-Fluxo completo, sem precisar de backend:
-1. Usuário preenche o `Simulator.jsx` (CNPJ validado, nome auto-preenchido via BrasilAPI, segmento, hipóteses filtradas por regime tributário).
-2. No resultado (passo 5), os dados viram um objeto que é codificado em base64 pela função `buildDiagnosticoUrl()` e vira um link tipo `seusite.com/?diagnostico=XXXXX`.
-3. **Passo 5 mostra só um resumo compacto** (faixas de valor + badges de contagem por grau de certeza, ex: "2 frentes · Consolidado") — não repete mais a lista item a item. O detalhamento completo (Fundamento, Condição, numeral romano, composição visual) mora só na página `Diagnostico.jsx`, acessível pelo link.
-4. Esse link aparece em 3 lugares: botão "Ver diagnóstico completo", botão "Copiar link", e embutido na mensagem do WhatsApp e no e-mail (EmailJS).
-5. Ao abrir o link, `App.jsx` detecta o parâmetro e renderiza `Diagnostico.jsx`, que decodifica os dados e mostra o relatório completo formatado.
-- `CERTEZA_CONFIG` (em `diagnosticoShared.js`) define 3 níveis: `consolidado` (azul), `defensavel` (dourado), `validacao` (neutro).
-- Config do EmailJS: `service_8wpx9uq` / `template_glqg928` / chave pública `Sr1K9lFnEDRGBozQN`, destino `hezus.simulador@gmail.com`.
-- A alíquota de PIS/COFINS não-cumulativo (9,25%) é a única baseada em lei explícita (Lei 10.637/2002 e 10.833/2003); as demais faixas min/max das 20 hipóteses são estimativas de mercado.
+## Simulador (Simulator.jsx) e fluxo de diagnóstico
+- 4 passos: dados da empresa (CNPJ com busca automática na BrasilAPI, nome, telefone, e-mail, regime, faturamento) → identificação de segmento (auto via CNAE ou manual) → seleção de hipóteses tributárias aplicáveis → confirmação de documentos (SPED/EFDs).
+- Ao final ("Ver estimativa"): abre o WhatsApp com o resumo, dispara e-mail via EmailJS, e navega a própria aba pra URL do diagnóstico (`?diagnostico=...`), que é a mesma página que pode ser compartilhada depois.
+- Mais de 20 hipóteses tributárias mapeadas por segmento/regime/grau de certeza no array `TESES`.
 
-## Metodologia.jsx (seção da landing page)
-Caso ilustrativo fictício ("Metalúrgica Exemplo Ltda.", Lucro Real) com 4 frentes de recuperação, grau de certeza, fundamento legal e condição. 4 etapas do processo. Aviso explícito de caso fictício. Termina com `<CtaButtons />`.
-- **Menciona "taxa de êxito" como modelo de cobrança** — ainda não confirmado com o Everton se é isso mesmo que a Hezus pratica.
+## EmailJS (envio de leads por e-mail)
+- Já configurado e em uso, sem backend próprio — chamada direta à API REST do EmailJS via `fetch` (sem SDK).
+- Credenciais (reaproveitadas em todo o projeto, não precisam ser recriadas):
+  - Service ID: `service_8wpx9uq`
+  - Template ID: `template_glqg928`
+  - Public Key: `Sr1K9lFnEDRGBozQN`
+- Usado em dois pontos:
+  1. `Simulator.jsx` (`sendLeadEmail`) — manda todos os campos do diagnóstico completo (nome, cnpj, telefone, email, regime, faturamento, teses selecionadas, faixas de valor, link do diagnóstico).
+  2. `LeadForm.jsx` (formulário de contato do rodapé) — reaproveita o mesmo service/template/key, mas só coleta Nome, Empresa, Faturamento aproximado e WhatsApp. Como o template foi feito pros campos do simulador, os campos que o LeadForm não coleta (CNPJ, regime, teses, faixas) chegam em branco no e-mail. Funciona, mas não é "bonito" — criar um template dedicado no EmailJS é uma melhoria futura opcional, não obrigatória.
 
-## Área "Atuação" (Atuacao.jsx) — duas frentes
-1. **Tributário**: otimização de carga tributária, recuperação de créditos, oportunidades consolidadas por STF/STJ, subvenções, reforma tributária (LC 214), suporte técnico em autuações (defesa formal fica com escritório de advocacia parceiro).
-2. **Licitações Públicas**: análise de editais, estruturação de propostas, habilitação, apoio técnico em questionamentos, gestão de contratos administrativos.
+## Navbar (Navbar.jsx)
+- 9 links + logo + botão "Diagnóstico gratuito" + hamburguer mobile.
+- Logo tem `shrink-0` pra nunca ser espremida pelo flexbox (bug corrigido: antes ficava distorcida em telas intermediárias).
+- Espaçamento entre links usa `space-x-*` responsivo (não `gap-*`) por ser mais robusto entre builds do Tailwind.
+- Botão "Diagnóstico gratuito" só aparece a partir do breakpoint `lg` (antes era `md`) — evita que ele dispute espaço com os 9 links em telas médias/tablet.
 
 ## Formulário de lead (LeadForm.jsx)
-- Campos: Nome, Empresa, Faturamento aproximado, WhatsApp.
-- **Pendência técnica ainda não resolvida**: não conectado a nenhum destino real (só `setSent(true)` local). Avaliar se devia usar o mesmo mecanismo do `Simulator.jsx` (EmailJS + link de diagnóstico).
+- Campos: Nome, Empresa, Faturamento aproximado, WhatsApp — agora controlados via `useState`.
+- **Já conectado ao EmailJS** (ver seção acima). Mostra "Enviando...", trata erro de envio com mensagem e permite tentar de novo; só mostra "Recebido!" se o envio realmente funcionar.
 
-## Problema técnico recorrente: bug de colagem no editor do GitHub
-Quando uma tag `<a` fica **sozinha em uma linha** (com atributos nas linhas seguintes), o editor web do GitHub apaga essa linha silenciosamente ao colar, quebrando o JSX. **Padrão identificado**: esse bug volta a acontecer especificamente no botão "Ver diagnóstico completo" do `Simulator.jsx` toda vez que a IA do Lovable regenera esse arquivo (já aconteceu 4 vezes) — parece que o Lovable tem preferência por formatar `<a>` em múltiplas linhas, o que é ok pro build do Lovable em si (React/JSX aceita), mas quebra especificamente na hora de colar no editor web do GitHub.
-**Regra permanente**: sempre escrever tags `<a>` com todos os atributos em uma única linha antes de entregar código pro Everton colar. Ao revisar qualquer novo código vindo do Lovable, **procurar especificamente por `<a` sozinho em início de linha antes de aprovar**. Quando o arquivo já existe com esse bug, localizar o trecho via Ctrl+F pelo texto visível e trocar só aquele bloco.
-**Observação de processo**: arquivos grandes como anexo/download têm gerado confusão às vezes (Everton não encontra o anexo). Quando isso acontecer, oferecer mandar o texto direto no chat como alternativa.
-
-## Regra de conteúdo: nunca reproduzir dados de concorrentes como se fossem da Hezus
-Everton colou uma vez um FAQ + números ("11 anos de atuação", "95% de sucesso", "232 empresas", "R$ 1 bilhão recuperado") que era cópia literal do site de um concorrente real (JP Balaban, citado pelo nome). Recusado — seria propaganda enganosa e reforça "direito tributário" (problema de OAB). Se pedido de novo: sempre oferecer a mesma estrutura visual com dados reais/confirmados da Hezus, nunca copiar números ou nome de concorrente.
-
-## Pendências já identificadas
-1. Revisar conteúdo de `Numbers.jsx` (apareceu no `App.jsx`, ainda não documentado).
-2. Decidir se `ClientPanel.jsx` volta pro `App.jsx` ou fica removido definitivamente.
-3. Conectar `LeadForm.jsx` a um destino real, ou substituí-lo pelo mecanismo do `Simulator.jsx`.
-4. Substituir os placeholders de CNPJ/depoimentos no rodapé e em `Testimonials.jsx`.
-5. Confirmar se "taxa de êxito" é realmente o modelo de cobrança da Hezus (mencionado no `Metodologia.jsx`).
-6. Decidir números reais (ou versão honesta "empresa nova, time experiente") pra uma futura seção de FAQ + estatísticas — sem reaproveitar dados de concorrente.
-7. Revisão de um advogado nas promessas de prazo e recuperação de crédito, antes de publicar definitivamente.
+## Pendências conhecidas
+1. Substituir os placeholders de depoimentos (`Testimonials.jsx`).
+2. Revisão de um advogado nas promessas de prazo e recuperação de crédito, antes de publicar.
+3. Confirmar se Hezus Data/Radar (seção Tecnologia) estão operacionais ou devem aparecer como "Em breve".
+4. Implementar no FAQ os números reais da empresa (87 empresas atendidas, 3 anos de existência, 10+ anos de expertise dos sócios).
+5. Aplicação das fotos do Everton e do Paulo na seção QuemSomos ficou interrompida.
+6. Confirmar se `FAQ.jsx`/`CtaButtons.jsx` foram de fato subidos no GitHub.
+7. (Opcional) Criar um template dedicado no EmailJS para o LeadForm do rodapé, já que hoje reaproveita o template do simulador e manda vários campos em branco.
 
 ## Regras de linguagem do projeto (importante manter sempre)
 | Evitar | Usar no lugar |
@@ -75,6 +72,6 @@ Everton colou uma vez um FAQ + números ("11 anos de atuação", "95% de sucesso
 **Como usar este arquivo numa conta nova do Claude:**
 1. Cole o link bruto: `https://raw.githubusercontent.com/evertondireito13-commits/hezus-tributos-app/main/CONTEXT.md`
 2. Peça: "busca esse link e me diz que já entendeu o projeto."
-3. Só peça upload de arquivo específico (não o zip inteiro) se for mexer em algo pontual daquele arquivo.
+3. Só peça upload de arquivo específico (não o zip inteiro) se for mexer em algo pontual daquele arquivo — o Claude não consegue navegar livremente pela árvore de arquivos do GitHub, só ler links exatos que você fornecer.
 
-**Convenção "SALVAR":** quando o Everton escrever a palavra `SALVAR` sozinha numa mensagem, o Claude deve: (1) resumir o que foi resolvido/decidido nesta conversa desde a última atualização; (2) reescrever este arquivo CONTEXT.md inteiro, já atualizado, pronto pra ele copiar e colar no GitHub (Edit → Ctrl+A → colar → Commit changes); (3) não esperar o fim da conversa pra isso — pode e deve ser pedido a qualquer momento.
+**Convenção "SALVAR":** quando o Everton escrever a palavra `SALVAR` sozinha numa mensagem, o Claude deve: (1) resumir o que foi resolvido/decidido nesta conversa desde a última atualização; (2) reescrever este arquivo CONTEXT.md inteiro, já atualizado, pronto pra ele copiar e colar no GitHub (Edit → Ctrl+A → colar → Commit changes); (3) não esperar o fim da conversa pra isso — pode e deve ser pedido a qualquer momento, assim que algo importante for concluído.
